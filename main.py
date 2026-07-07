@@ -1,28 +1,67 @@
-from analysis.market_analysis import analyze_market
 from config.settings import APP_NAME
 from config.settings import VERSION
 from config.settings import OWNER
 
-from data.crypto import get_bitcoin_price
-from data.gold import get_gold_price
-from data.dollar import get_dollar_price
+from data.crypto import get_crypto_prices
 
-print("=" * 45)
-print(APP_NAME)
-print("Version:", VERSION)
-print("Developer:", OWNER)
-print("=" * 45)
+from analysis.market_analysis import analyze_market
 
-btc = get_bitcoin_price()
-gold = get_gold_price()
-dollar = get_dollar_price()
+from risk.risk_manager import (
+    calculate_stop_loss,
+    calculate_take_profit,
+)
 
-print(f"BTC    : {btc} USD")
-print(f"Gold   : {gold} USD")
-print(f"Dollar : {dollar} Toman")
-signal = analyze_market(btc)
 
-print()
-print("Market Analysis")
-print("----------------")
-print("BTC Signal :", signal)
+def print_header():
+    print("=" * 50)
+    print(APP_NAME)
+    print(f"Version : {VERSION}")
+    print(f"Developer : {OWNER}")
+    print("=" * 50)
+
+
+def print_crypto(prices):
+    print("\nCRYPTO MARKET")
+    print("-" * 50)
+
+    for coin, price in prices.items():
+        print(f"{coin:<5}: {price} USD")
+
+
+def print_analysis(signal, risk):
+    print("\nMARKET ANALYSIS")
+    print("-" * 50)
+    print(f"Signal : {signal}")
+    print(f"Risk   : {risk}")
+
+
+def print_risk(stop_loss, take_profit):
+    print("\nRISK MANAGEMENT")
+    print("-" * 50)
+    print(f"Stop Loss  : {stop_loss}")
+    print(f"Take Profit: {take_profit}")
+
+
+def main():
+
+    prices = get_crypto_prices()
+
+    btc_price = prices["BTC"]
+
+    signal, risk = analyze_market(btc_price)
+
+    stop_loss = calculate_stop_loss(btc_price)
+
+    take_profit = calculate_take_profit(btc_price)
+
+    print_header()
+
+    print_crypto(prices)
+
+    print_analysis(signal, risk)
+
+    print_risk(stop_loss, take_profit)
+
+
+if __name__ == "__main__":
+    main()
