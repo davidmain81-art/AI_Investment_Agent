@@ -14,6 +14,7 @@ def print_header():
 
 
 def print_crypto(prices):
+
     print("\n📈 CRYPTO MARKET")
     print("-" * 50)
 
@@ -26,20 +27,46 @@ def print_crypto(prices):
 
 
 def print_analysis(signal, risk):
+
     print("\n📊 MARKET ANALYSIS")
     print("-" * 50)
+
     print(f"Signal : {signal}")
     print(f"Risk   : {risk}")
 
 
 def print_score(score):
+
     print("\n⭐ MARKET SCORE")
     print("-" * 50)
+
     print(f"Overall Score : {score}/100")
 
 
+def print_decision(decision):
+
+    print("\n🤖 AI INVESTMENT DECISION")
+    print("-" * 50)
+
+    print(f"Recommendation : {decision['recommendation']}")
+    print(f"Confidence     : {decision['confidence']}%")
+
+    print("\nReasons")
+
+    for reason in decision["reasons"]:
+        print(f"✓ {reason}")
+
+    print("\nSuggested Position")
+    print(decision["position"])
+
+    print("\nHolding Time")
+    print(decision["holding"])
+
+
 def print_risk(stop_loss, take_profit):
+
     print("\n🛡 RISK MANAGEMENT")
     print("-" * 50)
+
     print(f"Stop Loss  : {format_price(stop_loss)}")
     print(f"Take Profit: {format_price(take_profit)}")
