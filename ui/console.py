@@ -118,6 +118,13 @@ def print_global_recommendation(result):
     print(f"Best Market : {result['market']}")
     print(f"Signal      : {result['signal']}")
     print(f"Confidence  : {result['confidence']}%")
+    print(f"Final Score : {result['score']}")
+
+    print()
+
+    print(f"Crypto Score : {result['crypto_score']}")
+    print(f"Iran Score   : {result['iran_score']}")
+    print(f"Difference   : {result['difference']}")
 
     print("\nReason")
     print(result["reason"])

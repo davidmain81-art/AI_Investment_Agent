@@ -1,38 +1,64 @@
+from advisor.scoring import calculate_final_score
+
+
 def choose_best_market(
     crypto_decision,
     iran_decision,
+    crypto_market_score,
+    iran_market_score,
+    crypto_risk,
 ):
     """
-    Compare crypto and Iran markets
-    and choose the better investment.
+    Compare all markets using weighted scores.
     """
 
-    crypto_confidence = crypto_decision["confidence"]
-    iran_confidence = iran_decision["confidence"]
+    crypto_score = calculate_final_score(
+        crypto_market_score,
+        crypto_decision["confidence"],
+        crypto_risk,
+    )
 
-    if iran_confidence > crypto_confidence:
+    iran_score = calculate_final_score(
+        iran_market_score,
+        iran_decision["confidence"],
+        "LOW",
+    )
 
-        return {
+    if iran_score > crypto_score:
+
+        winner = {
             "market": "IRAN 🇮🇷",
             "signal": iran_decision["signal"],
-            "confidence": iran_confidence,
-            "reason": "Iran market has higher confidence.",
+            "confidence": iran_decision["confidence"],
+            "score": iran_score,
+            "reason": "Iran market has the highest final score.",
         }
 
-    elif crypto_confidence > iran_confidence:
+    elif crypto_score > iran_score:
 
-        return {
+        winner = {
             "market": "CRYPTO 🌍",
             "signal": crypto_decision["recommendation"],
-            "confidence": crypto_confidence,
-            "reason": "Crypto market has higher confidence.",
+            "confidence": crypto_decision["confidence"],
+            "score": crypto_score,
+            "reason": "Crypto market has the highest final score.",
         }
 
     else:
 
-        return {
+        winner = {
             "market": "BOTH",
             "signal": "HOLD 🟡",
-            "confidence": crypto_confidence,
-            "reason": "Both markets have similar confidence.",
+            "confidence": crypto_decision["confidence"],
+            "score": crypto_score,
+            "reason": "Both markets have equal scores.",
         }
+
+    winner["crypto_score"] = crypto_score
+    winner["iran_score"] = iran_score
+    winner["difference"] = round(
+        abs(crypto_score - iran_score),
+        2,
+    )
+
+    return winner

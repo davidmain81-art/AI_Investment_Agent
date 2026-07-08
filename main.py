@@ -42,29 +42,32 @@ def main():
 
     signal, risk = analyze_market(prices)
 
-    market_score = calculate_market_score(prices)
+    crypto_market_score = calculate_market_score(prices)
 
     decision = make_decision(
         signal,
         risk,
-        market_score,
+        crypto_market_score,
     )
 
     portfolio = build_portfolio(decision)
 
     iran_market = get_iran_market()
 
-    iran_score = calculate_iran_score(
+    iran_market_score = calculate_iran_score(
         iran_market
     )
 
     iran_decision = analyze_iran_market(
-        iran_score
+        iran_market_score
     )
 
     global_result = choose_best_market(
-        decision,
-        iran_decision,
+        crypto_decision=decision,
+        iran_decision=iran_decision,
+        crypto_market_score=crypto_market_score,
+        iran_market_score=iran_market_score,
+        crypto_risk=risk,
     )
 
     stop_loss = calculate_stop_loss(
@@ -85,7 +88,7 @@ def main():
     )
 
     print_score(
-        market_score
+        crypto_market_score
     )
 
     print_decision(
@@ -98,7 +101,7 @@ def main():
 
     print_iran_market(
         iran_market,
-        iran_score,
+        iran_market_score,
         iran_decision,
     )
 
