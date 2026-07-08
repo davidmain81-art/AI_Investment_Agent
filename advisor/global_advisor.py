@@ -1,64 +1,205 @@
-from advisor.scoring import calculate_final_score
+"""
+Global Market Advisor
+
+Compare all available markets.
+"""
+
+
+def build_market_list(
+
+    crypto_decision,
+    crypto_score,
+
+    iran_decision,
+    iran_score,
+
+):
+
+    markets = [
+
+        {
+
+            "market": "Crypto",
+
+            "signal": crypto_decision["recommendation"],
+
+            "confidence": crypto_decision["confidence"],
+
+            "score": crypto_score,
+
+        },
+
+        {
+
+            "market": "Iran Gold",
+
+            "signal": iran_decision["signal"],
+
+            "confidence": iran_decision["confidence"],
+
+            "score": iran_score,
+
+        },
+
+    ]
+
+    return markets
 
 
 def choose_best_market(
+
     crypto_decision,
+
     iran_decision,
-    crypto_market_score,
-    iran_market_score,
-    crypto_risk,
+
 ):
-    """
-    Compare all markets using weighted scores.
-    """
 
-    crypto_score = calculate_final_score(
-        crypto_market_score,
-        crypto_decision["confidence"],
-        crypto_risk,
+    crypto_final = (
+
+        crypto_decision["confidence"] * 0.7
+
+    ) + (
+
+        25 * 0.3
+
     )
 
-    iran_score = calculate_final_score(
-        iran_market_score,
-        iran_decision["confidence"],
-        "LOW",
+    iran_final = (
+
+        iran_decision["confidence"] * 0.7
+
+    ) + (
+
+        82.5 * 0.3
+
     )
 
-    if iran_score > crypto_score:
+    if iran_final > crypto_final:
 
-        winner = {
+        return {
+
             "market": "IRAN 🇮🇷",
+
             "signal": iran_decision["signal"],
+
             "confidence": iran_decision["confidence"],
-            "score": iran_score,
+
+            "final_score": round(
+
+                iran_final,
+
+                2,
+
+            ),
+
+            "crypto_score": round(
+
+                crypto_final,
+
+                2,
+
+            ),
+
+            "iran_score": round(
+
+                iran_final,
+
+                2,
+
+            ),
+
+            "difference": round(
+
+                iran_final - crypto_final,
+
+                2,
+
+            ),
+
             "reason": "Iran market has the highest final score.",
+
         }
 
-    elif crypto_score > iran_score:
+    elif crypto_final > iran_final:
 
-        winner = {
+        return {
+
             "market": "CRYPTO 🌍",
+
             "signal": crypto_decision["recommendation"],
+
             "confidence": crypto_decision["confidence"],
-            "score": crypto_score,
+
+            "final_score": round(
+
+                crypto_final,
+
+                2,
+
+            ),
+
+            "crypto_score": round(
+
+                crypto_final,
+
+                2,
+
+            ),
+
+            "iran_score": round(
+
+                iran_final,
+
+                2,
+
+            ),
+
+            "difference": round(
+
+                crypto_final - iran_final,
+
+                2,
+
+            ),
+
             "reason": "Crypto market has the highest final score.",
+
         }
 
-    else:
+    return {
 
-        winner = {
-            "market": "BOTH",
-            "signal": "HOLD 🟡",
-            "confidence": crypto_decision["confidence"],
-            "score": crypto_score,
-            "reason": "Both markets have equal scores.",
-        }
+        "market": "BOTH",
 
-    winner["crypto_score"] = crypto_score
-    winner["iran_score"] = iran_score
-    winner["difference"] = round(
-        abs(crypto_score - iran_score),
-        2,
-    )
+        "signal": "HOLD 🟡",
 
-    return winner
+        "confidence": crypto_decision["confidence"],
+
+        "final_score": round(
+
+            crypto_final,
+
+            2,
+
+        ),
+
+        "crypto_score": round(
+
+            crypto_final,
+
+            2,
+
+        ),
+
+        "iran_score": round(
+
+            iran_final,
+
+            2,
+
+        ),
+
+        "difference": 0,
+
+        "reason": "Both markets have similar scores.",
+
+    }

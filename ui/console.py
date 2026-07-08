@@ -19,6 +19,7 @@ def print_crypto(prices):
     print("-" * 50)
 
     for coin, data in prices.items():
+
         print(
             f"{coin:<5}: "
             f"{format_price(data['price'])} USD   "
@@ -118,7 +119,7 @@ def print_global_recommendation(result):
     print(f"Best Market : {result['market']}")
     print(f"Signal      : {result['signal']}")
     print(f"Confidence  : {result['confidence']}%")
-    print(f"Final Score : {result['score']}")
+    print(f"Final Score : {result['final_score']}")
 
     print()
 
@@ -128,6 +129,20 @@ def print_global_recommendation(result):
 
     print("\nReason")
     print(result["reason"])
+
+
+def print_allocations(allocations):
+
+    print("\n💰 CAPITAL ALLOCATION")
+    print("-" * 50)
+
+    for item in allocations:
+
+        print(
+            f"{item['market']:<15}"
+            f"{item['allocation']:>6}%"
+            f"   {item['signal']}"
+        )
 
 
 def print_risk(stop_loss, take_profit):
