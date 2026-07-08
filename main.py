@@ -1,66 +1,24 @@
-from ui.console import (
-    print_header,
-    print_crypto,
-    print_analysis,
-    print_score,
-    print_risk,
-)
-from analysis.market_score import calculate_market_score
-from ui.console import (
-    print_header,
-    print_crypto,
-    print_analysis,
-    print_risk,
-)
-from datetime import datetime
-
-from config.settings import APP_NAME, VERSION, OWNER
+from logs.data_logger import save_market_data
 
 from data.crypto import get_crypto_prices
 
 from analysis.market_analysis import analyze_market
+from analysis.market_score import calculate_market_score
+from analysis.decision_engine import make_decision
 
 from risk.risk_manager import (
     calculate_stop_loss,
     calculate_take_profit,
 )
 
-from logs.data_logger import save_market_data
-
-
-def print_header():
-    print("=" * 50)
-    print(APP_NAME)
-    print(f"Version : {VERSION}")
-    print(f"Developer : {OWNER}")
-    print(f"Time : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("=" * 50)
-
-
-def print_crypto(prices):
-    print("\nCRYPTO MARKET")
-    print("-" * 50)
-
-    for coin, data in prices.items():
-        print(
-            f"{coin:<5}: "
-            f"{data['price']} USD   "
-            f"({data['change']:.2f}%)"
-        )
-
-
-def print_analysis(signal, risk):
-    print("\nMARKET ANALYSIS")
-    print("-" * 50)
-    print(f"Signal : {signal}")
-    print(f"Risk   : {risk}")
-
-
-def print_risk(stop_loss, take_profit):
-    print("\nRISK MANAGEMENT")
-    print("-" * 50)
-    print(f"Stop Loss  : {stop_loss:.2f}")
-    print(f"Take Profit: {take_profit:.2f}")
+from ui.console import (
+    print_header,
+    print_crypto,
+    print_analysis,
+    print_score,
+    print_decision,
+    print_risk,
+)
 
 
 def main():
@@ -72,7 +30,14 @@ def main():
     btc_price = prices["BTC"]["price"]
 
     signal, risk = analyze_market(btc_price)
+
     market_score = calculate_market_score(prices)
+
+    decision = make_decision(
+        signal,
+        risk,
+        market_score,
+    )
 
     stop_loss = calculate_stop_loss(btc_price)
 
@@ -83,7 +48,10 @@ def main():
     print_crypto(prices)
 
     print_analysis(signal, risk)
+
     print_score(market_score)
+
+    print_decision(decision)
 
     print_risk(stop_loss, take_profit)
 
