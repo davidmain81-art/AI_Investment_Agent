@@ -63,6 +63,66 @@ def print_decision(decision):
     print(decision["holding"])
 
 
+def print_portfolio(portfolio):
+
+    print("\n💼 PORTFOLIO ADVISOR")
+    print("-" * 50)
+
+    print(
+        f"Capital : {portfolio['capital']:,} "
+        f"{portfolio['currency']}"
+    )
+
+    for asset, info in portfolio["portfolio"].items():
+
+        print(
+            f"{asset:<5}"
+            f"{info['percent']:>4}%   "
+            f"{info['amount']:,.0f} "
+            f"{portfolio['currency']}"
+        )
+
+
+def print_iran_market(market, score, decision):
+
+    print("\n🇮🇷 IRAN MARKET")
+    print("-" * 50)
+
+    print(
+        f"Gold 18K : {market['gold18']['price']:,} IRR"
+        f"   ({market['gold18']['change']:+.2f}%)"
+    )
+
+    print(
+        f"USD      : {market['usd']['price']:,} IRR"
+        f"   ({market['usd']['change']:+.2f}%)"
+    )
+
+    print(
+        f"Coin     : {market['coin']['price']:,} IRR"
+        f"   ({market['coin']['change']:+.2f}%)"
+    )
+
+    print()
+
+    print(f"Market Score : {score}/100")
+    print(f"Signal       : {decision['signal']}")
+    print(f"Confidence   : {decision['confidence']}%")
+
+
+def print_global_recommendation(result):
+
+    print("\n🌍 GLOBAL AI RECOMMENDATION")
+    print("-" * 50)
+
+    print(f"Best Market : {result['market']}")
+    print(f"Signal      : {result['signal']}")
+    print(f"Confidence  : {result['confidence']}%")
+
+    print("\nReason")
+    print(result["reason"])
+
+
 def print_risk(stop_loss, take_profit):
 
     print("\n🛡 RISK MANAGEMENT")
