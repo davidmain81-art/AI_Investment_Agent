@@ -17,6 +17,8 @@ from advisor.global_advisor import choose_best_market
 from database.database import initialize_database
 from database.history import save_market_history
 
+from trading.trade_manager import create_trade
+
 from risk.risk_manager import (
     calculate_stop_loss,
     calculate_take_profit,
@@ -75,6 +77,18 @@ def main():
         crypto_risk=risk,
     )
 
+    stop_loss = calculate_stop_loss(btc_price)
+
+    take_profit = calculate_take_profit(btc_price)
+
+    trade = create_trade(
+        asset="BTC",
+        decision=decision,
+        entry_price=btc_price,
+        stop_loss=stop_loss,
+        take_profit=take_profit,
+    )
+
     save_market_history(
         prices=prices,
         crypto_score=global_result["crypto_score"],
@@ -84,34 +98,17 @@ def main():
         winner=global_result["market"],
     )
 
-    stop_loss = calculate_stop_loss(
-        btc_price
-    )
-
-    take_profit = calculate_take_profit(
-        btc_price
-    )
-
     print_header()
 
     print_crypto(prices)
 
-    print_analysis(
-        signal,
-        risk,
-    )
+    print_analysis(signal, risk)
 
-    print_score(
-        crypto_market_score
-    )
+    print_score(crypto_market_score)
 
-    print_decision(
-        decision
-    )
+    print_decision(decision)
 
-    print_portfolio(
-        portfolio
-    )
+    print_portfolio(portfolio)
 
     print_iran_market(
         iran_market,
@@ -119,9 +116,17 @@ def main():
         iran_decision,
     )
 
-    print_global_recommendation(
-        global_result
-    )
+    print_global_recommendation(global_result)
+
+    print("\n📄 CURRENT TRADE")
+    print("-" * 50)
+    print(f"ID          : {trade['id']}")
+    print(f"Asset       : {trade['asset']}")
+    print(f"Signal      : {trade['signal']}")
+    print(f"Entry       : {trade['entry']}")
+    print(f"Stop Loss   : {trade['stop_loss']}")
+    print(f"Take Profit : {trade['take_profit']}")
+    print(f"Status      : {trade['status']}")
 
     print_risk(
         stop_loss,
