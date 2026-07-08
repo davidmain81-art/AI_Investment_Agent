@@ -7,15 +7,31 @@ def get_crypto_prices():
 
     params = {
         "ids": "bitcoin,ethereum,binancecoin,solana,ripple",
-        "vs_currencies": "usd"
+        "vs_currencies": "usd",
+        "include_24hr_change": "true"
     }
 
     data = APIClient.get(url, params)
 
     return {
-        "BTC": data["bitcoin"]["usd"],
-        "ETH": data["ethereum"]["usd"],
-        "BNB": data["binancecoin"]["usd"],
-        "SOL": data["solana"]["usd"],
-        "XRP": data["ripple"]["usd"],
+        "BTC": {
+            "price": data["bitcoin"]["usd"],
+            "change": data["bitcoin"]["usd_24h_change"],
+        },
+        "ETH": {
+            "price": data["ethereum"]["usd"],
+            "change": data["ethereum"]["usd_24h_change"],
+        },
+        "BNB": {
+            "price": data["binancecoin"]["usd"],
+            "change": data["binancecoin"]["usd_24h_change"],
+        },
+        "SOL": {
+            "price": data["solana"]["usd"],
+            "change": data["solana"]["usd_24h_change"],
+        },
+        "XRP": {
+            "price": data["ripple"]["usd"],
+            "change": data["ripple"]["usd_24h_change"],
+        },
     }

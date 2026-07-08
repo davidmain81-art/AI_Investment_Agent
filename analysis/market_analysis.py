@@ -1,13 +1,14 @@
-def analyze_market(price):
+def analyze_market(btc_price):
+    """
+    Simple market analysis based on Bitcoin price.
+    """
 
-    if price >= 60000:
+    if btc_price >= 60000:
         signal = "BUY 🟢"
         risk = "LOW"
-
-    elif price >= 50000:
+    elif btc_price >= 50000:
         signal = "HOLD 🟡"
         risk = "MEDIUM"
-
     else:
         signal = "SELL 🔴"
         risk = "HIGH"
