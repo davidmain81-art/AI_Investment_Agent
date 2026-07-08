@@ -14,6 +14,9 @@ from markets.iran_decision import analyze_iran_market
 
 from advisor.global_advisor import choose_best_market
 
+from database.database import initialize_database
+from database.history import save_market_history
+
 from risk.risk_manager import (
     calculate_stop_loss,
     calculate_take_profit,
@@ -33,6 +36,8 @@ from ui.console import (
 
 
 def main():
+
+    initialize_database()
 
     prices = get_crypto_prices()
 
@@ -68,6 +73,15 @@ def main():
         crypto_market_score=crypto_market_score,
         iran_market_score=iran_market_score,
         crypto_risk=risk,
+    )
+
+    save_market_history(
+        prices=prices,
+        crypto_score=global_result["crypto_score"],
+        iran_score=global_result["iran_score"],
+        crypto_signal=decision["recommendation"],
+        iran_signal=iran_decision["signal"],
+        winner=global_result["market"],
     )
 
     stop_loss = calculate_stop_loss(
