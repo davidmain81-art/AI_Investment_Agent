@@ -12,7 +12,6 @@ def save_trade(
     confidence,
     status="OPEN",
 ):
-
     connection = get_connection()
 
     cursor = connection.cursor()
@@ -59,7 +58,6 @@ def close_trade(
     trade_id,
     status="CLOSED",
 ):
-
     connection = get_connection()
 
     cursor = connection.cursor()
@@ -81,3 +79,49 @@ def close_trade(
     connection.commit()
 
     connection.close()
+
+
+def get_last_open_trade():
+    """
+    Return latest OPEN trade.
+    """
+
+    connection = get_connection()
+
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT
+            id,
+            asset,
+            signal,
+            entry_price,
+            stop_loss,
+            take_profit,
+            confidence,
+            status
+        FROM trades
+        WHERE status='OPEN'
+        ORDER BY id DESC
+        LIMIT 1
+        """
+    )
+
+    row = cursor.fetchone()
+
+    connection.close()
+
+    if row is None:
+        return None
+
+    return {
+        "id": row[0],
+        "asset": row[1],
+        "signal": row[2],
+        "entry": row[3],
+        "stop_loss": row[4],
+        "take_profit": row[5],
+        "confidence": row[6],
+        "status": row[7],
+    }

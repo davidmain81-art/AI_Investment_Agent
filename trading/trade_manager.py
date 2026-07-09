@@ -1,5 +1,8 @@
 from database.predictions import save_prediction
-from database.trades import save_trade
+from database.trades import (
+    save_trade,
+    get_last_open_trade,
+)
 
 
 def create_trade(
@@ -53,3 +56,11 @@ def create_trade(
         "position": decision["position"],
         "status": "OPEN",
     }
+
+
+def get_current_trade():
+    """
+    Return latest OPEN trade.
+    """
+
+    return get_last_open_trade()
