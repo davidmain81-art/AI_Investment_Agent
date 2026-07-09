@@ -12,6 +12,10 @@ def initialize_database():
     connection = get_connection()
     cursor = connection.cursor()
 
+    # -----------------------------
+    # Market History
+    # -----------------------------
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS market_history(
 
@@ -36,6 +40,10 @@ def initialize_database():
     )
     """)
 
+    # -----------------------------
+    # Predictions
+    # -----------------------------
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS predictions(
 
@@ -54,6 +62,10 @@ def initialize_database():
     )
     """)
 
+    # -----------------------------
+    # Prediction Results
+    # -----------------------------
+
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS prediction_results(
 
@@ -69,6 +81,10 @@ def initialize_database():
 
     )
     """)
+
+    # -----------------------------
+    # Trades
+    # -----------------------------
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS trades(
@@ -90,8 +106,37 @@ def initialize_database():
         confidence REAL,
 
         status TEXT
+
+    )
+    """)
+
+    # -----------------------------
+    # Trade Results
+    # NEW TABLE
+    # -----------------------------
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS trade_results(
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        trade_id INTEGER,
+
+        closed_at TEXT,
+
+        exit_price REAL,
+
+        profit_percent REAL,
+
+        profit_amount REAL,
+
+        holding_days REAL,
+
+        result TEXT
+
     )
     """)
 
     connection.commit()
+
     connection.close()

@@ -2,6 +2,7 @@ from database.predictions import save_prediction
 from database.trades import (
     save_trade,
     get_last_open_trade,
+    close_trade,
 )
 
 
@@ -13,7 +14,7 @@ def create_trade(
     take_profit,
 ):
     """
-    Create AI trade only when position > 0.
+    Smart Trade Manager
     """
 
     position = decision["position"].replace("%", "").strip()
@@ -26,12 +27,38 @@ def create_trade(
     if position <= 0:
         return None
 
+    current_trade = get_last_open_trade()
+
+    # ---------------------------------
+    # Existing trade
+    # ---------------------------------
+
+    if current_trade:
+
+        # Same signal → keep trade
+
+        if current_trade["signal"] == decision["recommendation"]:
+
+            return current_trade
+
+        # Reverse signal → close old trade
+
+        close_trade(current_trade["id"])
+
+    # ---------------------------------
+    # Save prediction
+    # ---------------------------------
+
     prediction_id = save_prediction(
         asset=asset,
         prediction=decision["recommendation"],
         entry_price=entry_price,
         confidence=decision["confidence"],
     )
+
+    # ---------------------------------
+    # Open new trade
+    # ---------------------------------
 
     trade_id = save_trade(
         asset=asset,
@@ -59,8 +86,5 @@ def create_trade(
 
 
 def get_current_trade():
-    """
-    Return latest OPEN trade.
-    """
 
     return get_last_open_trade()
