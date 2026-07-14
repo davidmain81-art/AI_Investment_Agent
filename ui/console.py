@@ -5,6 +5,7 @@ from utils.formatter import format_price
 
 
 def print_header():
+
     print("=" * 50)
     print(APP_NAME)
     print(f"Version : {VERSION}")
@@ -21,9 +22,13 @@ def print_crypto(prices):
     for coin, data in prices.items():
 
         print(
+
             f"{coin:<5}: "
+
             f"{format_price(data['price'])} USD   "
+
             f"({data['change']:.2f}%)"
+
         )
 
 
@@ -52,15 +57,24 @@ def print_decision(decision):
     print(f"Recommendation : {decision['recommendation']}")
     print(f"Confidence     : {decision['confidence']}%")
 
-    print("\nReasons")
+    print()
+
+    print("Reasons")
 
     for reason in decision["reasons"]:
+
         print(f"✓ {reason}")
 
-    print("\nSuggested Position")
+    print()
+
+    print("Suggested Position")
+
     print(decision["position"])
 
-    print("\nHolding Time")
+    print()
+
+    print("Holding Time")
+
     print(decision["holding"])
 
 
@@ -70,17 +84,23 @@ def print_portfolio(portfolio):
     print("-" * 50)
 
     print(
-        f"Capital : {portfolio['capital']:,} "
-        f"{portfolio['currency']}"
+
+        f"Capital : {portfolio['capital']:,} IRR"
+
     )
 
-    for asset, info in portfolio["portfolio"].items():
+    print()
+
+    for item in portfolio["allocation"]:
 
         print(
-            f"{asset:<5}"
-            f"{info['percent']:>4}%   "
-            f"{info['amount']:,.0f} "
-            f"{portfolio['currency']}"
+
+            f"{item['asset']:<8}"
+
+            f"{item['percent']:>4}%   "
+
+            f"{item['amount']:,.0f} IRR"
+
         )
 
 
@@ -90,18 +110,27 @@ def print_iran_market(market, score, decision):
     print("-" * 50)
 
     print(
+
         f"Gold 18K : {market['gold18']['price']:,} IRR"
+
         f"   ({market['gold18']['change']:+.2f}%)"
+
     )
 
     print(
+
         f"USD      : {market['usd']['price']:,} IRR"
+
         f"   ({market['usd']['change']:+.2f}%)"
+
     )
 
     print(
+
         f"Coin     : {market['coin']['price']:,} IRR"
+
         f"   ({market['coin']['change']:+.2f}%)"
+
     )
 
     print()
@@ -127,7 +156,10 @@ def print_global_recommendation(result):
     print(f"Iran Score   : {result['iran_score']}")
     print(f"Difference   : {result['difference']}")
 
-    print("\nReason")
+    print()
+
+    print("Reason")
+
     print(result["reason"])
 
 
@@ -139,9 +171,13 @@ def print_allocations(allocations):
     for item in allocations:
 
         print(
+
             f"{item['market']:<15}"
+
             f"{item['allocation']:>6}%"
+
             f"   {item['signal']}"
+
         )
 
 

@@ -1,0 +1,30 @@
+2026-07-12 21:18:50.498560 : Engine Started
+2026-07-12 23:32:33.334550 : Engine Started
+2026-07-12 23:32:38.607418 : Engine Started
+2026-07-12 23:38:46.085821 : Engine Started
+2026-07-12 23:51:38.213213 : Engine Started
+2026-07-13 00:14:20.464461 : Live Engine Started
+2026-07-13 00:14:20.465144 : Engine Started
+2026-07-13 00:14:21.091010 : TradeService.execute() missing 1 required positional argument: 'take_profit'
+2026-07-13 00:19:21.092322 : Engine Started
+2026-07-13 00:19:22.300946 : TradeService.execute() missing 1 required positional argument: 'take_profit'
+2026-07-13 00:33:39.229655 : Live Engine Started
+2026-07-13 00:33:39.230808 : Engine Started
+2026-07-13 00:33:41.408495 : TradeService.execute() missing 1 required positional argument: 'take_profit'
+2026-07-13 00:38:41.410593 : Engine Started
+2026-07-13 00:38:42.254930 : TradeService.execute() missing 1 required positional argument: 'take_profit'
+2026-07-13 00:40:03.235019 : Live Engine Started
+2026-07-13 00:40:03.235631 : Engine Started
+2026-07-13 00:40:03.804771 : Cycle Finished
+2026-07-13 00:45:03.808657 : Engine Started
+2026-07-13 00:45:04.637346 : Cannot operate on a closed database.
+2026-07-13 00:50:04.639453 : Engine Started
+2026-07-13 00:50:05.837593 : Cannot operate on a closed database.
+2026-07-13 00:55:05.838650 : Engine Started
+2026-07-13 00:55:06.822329 : Cannot operate on a closed database.
+2026-07-14 17:05:50.818331 : Live Engine Started
+2026-07-14 17:05:50.847100 : Engine Started
+2026-07-14 17:05:52.325518 : Cycle Finished
+2026-07-14 17:16:14.801408 : Live Engine Started
+2026-07-14 17:16:14.802310 : Engine Started
+2026-07-14 17:16:17.177575 : Cycle Finished

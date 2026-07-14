@@ -1,25 +1,55 @@
-from portfolio.allocation import allocate_assets
-from portfolio.capital import CAPITAL, CURRENCY
+"""
+Portfolio Advisor
+Version 2.0
+"""
+
+from portfolio.optimizer import optimize_portfolio
 
 
 def build_portfolio(decision):
 
-    allocation = allocate_assets(decision)
+    crypto_score = decision.get("market_score", 50)
 
-    portfolio = {}
+    iran_score = 65
+
+    allocation = optimize_portfolio(
+
+        decision,
+
+        crypto_score,
+
+        iran_score,
+
+    )
+
+    capital = 100_000_000
+
+    portfolio = {
+
+        "capital": capital,
+
+        "allocation": []
+
+    }
 
     for asset, percent in allocation.items():
 
-        portfolio[asset] = {
-            "percent": percent,
-            "amount": CAPITAL * percent / 100,
-        }
+        portfolio["allocation"].append(
 
-    return {
-        "recommendation": decision["recommendation"],
-        "market_score": decision["market_score"],
-        "confidence": decision["confidence"],
-        "currency": CURRENCY,
-        "capital": CAPITAL,
-        "portfolio": portfolio,
-    }
+            {
+
+                "asset": asset,
+
+                "percent": percent,
+
+                "amount": round(
+
+                    capital * percent / 100
+
+                )
+
+            }
+
+        )
+
+    return portfolio

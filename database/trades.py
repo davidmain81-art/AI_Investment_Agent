@@ -1,7 +1,14 @@
+"""
+Trades Database
+Version 0.7
+"""
+
 from datetime import datetime
 
 from database.database import get_connection
 
+
+# --------------------------------------------------------
 
 def save_trade(
     asset,
@@ -10,10 +17,11 @@ def save_trade(
     stop_loss,
     take_profit,
     confidence,
+    prediction_id=None,
     status="OPEN",
 ):
-    connection = get_connection()
 
+    connection = get_connection()
     cursor = connection.cursor()
 
     cursor.execute(
@@ -27,11 +35,12 @@ def save_trade(
             stop_loss,
             take_profit,
             confidence,
+            prediction_id,
             status
 
         )
 
-        VALUES(?,?,?,?,?,?,?,?)
+        VALUES(?,?,?,?,?,?,?,?,?)
         """,
         (
             datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -41,6 +50,7 @@ def save_trade(
             stop_loss,
             take_profit,
             confidence,
+            prediction_id,
             status,
         ),
     )
@@ -48,51 +58,80 @@ def save_trade(
     trade_id = cursor.lastrowid
 
     connection.commit()
-
     connection.close()
 
     return trade_id
 
 
+# --------------------------------------------------------
+
 def close_trade(
     trade_id,
+    exit_price=None,
+    pnl=None,
+    exit_reason=None,
     status="CLOSED",
 ):
-    connection = get_connection()
 
+    connection = get_connection()
     cursor = connection.cursor()
 
     cursor.execute(
         """
         UPDATE trades
 
-        SET status=?
+        SET
+
+            status=?,
+            exit_price=?,
+            pnl=?,
+            exit_reason=?,
+            closed_at=?
 
         WHERE id=?
         """,
         (
             status,
+            exit_price,
+            pnl,
+            exit_reason,
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             trade_id,
         ),
     )
 
     connection.commit()
-
     connection.close()
 
 
+# --------------------------------------------------------
+
+def update_trade_result(
+    trade_id,
+    exit_price,
+    pnl,
+    exit_reason,
+):
+
+    close_trade(
+        trade_id=trade_id,
+        exit_price=exit_price,
+        pnl=pnl,
+        exit_reason=exit_reason,
+    )
+
+
+# --------------------------------------------------------
+
 def get_last_open_trade():
-    """
-    Return latest OPEN trade.
-    """
 
     connection = get_connection()
-
     cursor = connection.cursor()
 
     cursor.execute(
         """
         SELECT
+
             id,
             asset,
             signal,
@@ -100,10 +139,15 @@ def get_last_open_trade():
             stop_loss,
             take_profit,
             confidence,
+            prediction_id,
             status
+
         FROM trades
+
         WHERE status='OPEN'
+
         ORDER BY id DESC
+
         LIMIT 1
         """
     )
@@ -113,9 +157,11 @@ def get_last_open_trade():
     connection.close()
 
     if row is None:
+
         return None
 
     return {
+
         "id": row[0],
         "asset": row[1],
         "signal": row[2],
@@ -123,5 +169,31 @@ def get_last_open_trade():
         "stop_loss": row[4],
         "take_profit": row[5],
         "confidence": row[6],
-        "status": row[7],
+        "prediction_id": row[7],
+        "status": row[8],
+
     }
+
+
+# --------------------------------------------------------
+
+def get_all_trades():
+
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        SELECT *
+
+        FROM trades
+
+        ORDER BY id
+        """
+    )
+
+    rows = cursor.fetchall()
+
+    connection.close()
+
+    return rows

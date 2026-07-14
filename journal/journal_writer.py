@@ -1,124 +1,63 @@
-from pathlib import Path
-from datetime import datetime
+"""
+AI Journal Writer
+Version 0.9
+"""
+
+import os
 
 
-JOURNAL_DIR = Path("journal")
+class JournalWriter:
 
-JOURNAL_DIR.mkdir(exist_ok=True)
+    def __init__(self):
 
-
-def save_journal(
-
-    prices,
-
-    decision,
-
-    iran_decision,
-
-    global_result,
-
-    stop_loss,
-
-    take_profit,
-
-):
-
-    today = datetime.now().strftime(
-
-        "%Y-%m-%d"
-
-    )
-
-    filename = JOURNAL_DIR / f"{today}.txt"
-
-    btc = prices["BTC"]["price"]
-
-    with open(
-
-        filename,
-
-        "w",
-
-        encoding="utf-8",
-
-    ) as file:
-
-        file.write("=" * 45 + "\n")
-
-        file.write("AI DAILY JOURNAL\n")
-
-        file.write("=" * 45 + "\n\n")
-
-        file.write(f"Date : {today}\n\n")
-
-        file.write("CRYPTO\n")
-
-        file.write(
-
-            f"Signal : {decision['recommendation']}\n"
-
+        os.makedirs(
+            "journal",
+            exist_ok=True,
         )
 
-        file.write(
+    def write(
+        self,
+        trade,
+        lesson,
+    ):
 
-            f"Confidence : {decision['confidence']}%\n\n"
-
+        filename = (
+            f"journal/Trade_{trade['id']}.txt"
         )
 
-        file.write("IRAN\n")
+        with open(
 
-        file.write(
+            filename,
 
-            f"Signal : {iran_decision['signal']}\n"
+            "w",
 
-        )
+            encoding="utf-8",
 
-        file.write(
-
-            f"Confidence : {iran_decision['confidence']}%\n\n"
-
-        )
-
-        file.write("GLOBAL\n")
-
-        file.write(
-
-            f"Best Market : {global_result['market']}\n"
-
-        )
-
-        file.write(
-
-            f"Reason : {global_result['reason']}\n\n"
-
-        )
-
-        file.write("BTC\n")
-
-        file.write(
-
-            f"Price : {btc}\n"
-
-        )
-
-        file.write(
-
-            f"Stop Loss : {stop_loss:.2f}\n"
-
-        )
-
-        file.write(
-
-            f"Take Profit : {take_profit:.2f}\n\n"
-
-        )
-
-        file.write("Reasons\n")
-
-        for reason in decision["reasons"]:
+        ) as file:
 
             file.write(
 
-                f"- {reason}\n"
+f"""Trade ID : {trade['id']}
 
+Asset : {trade['asset']}
+
+Signal : {trade['signal']}
+
+Entry Price : {trade['entry_price']}
+
+Exit Price : {trade['exit_price']}
+
+PnL : {trade['pnl']} %
+
+Status : {trade['status']}
+
+Reason : {trade['exit_reason']}
+
+==================================
+
+AI Lesson
+
+{lesson}
+
+"""
             )

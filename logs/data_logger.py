@@ -1,36 +1,86 @@
-import csv
+"""
+Market Data Logger
+Version 0.8
+"""
+
+import json
 import os
 from datetime import datetime
 
-LOG_FILE = "logs/market_data.csv"
+DATA_FILE = "logs/market_cache.json"
 
 
 def save_market_data(prices):
+    """
+    Save latest market data.
+    """
 
     os.makedirs("logs", exist_ok=True)
 
-    file_exists = os.path.isfile(LOG_FILE)
+    data = {
+        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "prices": prices,
+    }
 
-    with open(LOG_FILE, "a", newline="", encoding="utf-8") as file:
+    with open(
+        DATA_FILE,
+        "w",
+        encoding="utf-8",
+    ) as file:
 
-        writer = csv.writer(file)
+        json.dump(
+            data,
+            file,
+            ensure_ascii=False,
+            indent=4,
+        )
 
-        if not file_exists:
 
-            writer.writerow([
-                "Date",
-                "BTC",
-                "ETH",
-                "BNB",
-                "SOL",
-                "XRP",
-            ])
+def load_last_market_data():
+    """
+    Load cached market data.
+    """
 
-        writer.writerow([
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            prices["BTC"],
-            prices["ETH"],
-            prices["BNB"],
-            prices["SOL"],
-            prices["XRP"],
-        ])
+    if not os.path.exists(DATA_FILE):
+        return None
+
+    try:
+
+        with open(
+            DATA_FILE,
+            "r",
+            encoding="utf-8",
+        ) as file:
+
+            data = json.load(file)
+
+        return data.get("prices")
+
+    except Exception:
+
+        return None
+
+
+def get_last_update():
+    """
+    Return cache timestamp.
+    """
+
+    if not os.path.exists(DATA_FILE):
+        return None
+
+    try:
+
+        with open(
+            DATA_FILE,
+            "r",
+            encoding="utf-8",
+        ) as file:
+
+            data = json.load(file)
+
+        return data.get("updated_at")
+
+    except Exception:
+
+        return None

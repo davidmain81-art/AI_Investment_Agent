@@ -1,11 +1,21 @@
-from engine.investment_engine import InvestmentEngine
+"""
+AI Investment Agent
+Version 2.0
+"""
+
+from versions.stable.version import VERSION
+from engine.live_engine import LiveEngine
 
 
 def main():
 
-    engine = InvestmentEngine()
+    engine = LiveEngine(
 
-    engine.run()
+        interval=60
+
+    )
+
+    engine.start()
 
 
 if __name__ == "__main__":

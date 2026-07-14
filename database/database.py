@@ -7,16 +7,35 @@ def get_connection():
     return sqlite3.connect(DATABASE_NAME)
 
 
+def add_column_if_not_exists(cursor, table, column, definition):
+
+    cursor.execute(f"PRAGMA table_info({table})")
+
+    columns = [c[1] for c in cursor.fetchall()]
+
+    if column not in columns:
+
+        cursor.execute(
+
+            f"ALTER TABLE {table} ADD COLUMN {column} {definition}"
+
+        )
+
+        print(f"[Migration] {table}.{column} added.")
+
+
 def initialize_database():
 
     connection = get_connection()
+
     cursor = connection.cursor()
 
-    # -----------------------------
+    # ===================================================
     # Market History
-    # -----------------------------
+    # ===================================================
 
     cursor.execute("""
+
     CREATE TABLE IF NOT EXISTS market_history(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,13 +57,15 @@ def initialize_database():
         winner TEXT
 
     )
+
     """)
 
-    # -----------------------------
+    # ===================================================
     # Predictions
-    # -----------------------------
+    # ===================================================
 
     cursor.execute("""
+
     CREATE TABLE IF NOT EXISTS predictions(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,13 +81,15 @@ def initialize_database():
         confidence REAL
 
     )
+
     """)
 
-    # -----------------------------
+    # ===================================================
     # Prediction Results
-    # -----------------------------
+    # ===================================================
 
     cursor.execute("""
+
     CREATE TABLE IF NOT EXISTS prediction_results(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -80,13 +103,15 @@ def initialize_database():
         success INTEGER
 
     )
+
     """)
 
-    # -----------------------------
+    # ===================================================
     # Trades
-    # -----------------------------
+    # ===================================================
 
     cursor.execute("""
+
     CREATE TABLE IF NOT EXISTS trades(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -108,34 +133,102 @@ def initialize_database():
         status TEXT
 
     )
+
     """)
 
-    # -----------------------------
-    # Trade Results
-    # NEW TABLE
-    # -----------------------------
+    # ===================================================
+    # AI Memory
+    # ===================================================
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS trade_results(
+
+    CREATE TABLE IF NOT EXISTS ai_memory(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        trade_id INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-        closed_at TEXT,
+        asset TEXT,
 
-        exit_price REAL,
+        signal TEXT,
 
-        profit_percent REAL,
+        confidence REAL,
 
-        profit_amount REAL,
+        market_score REAL,
 
-        holding_days REAL,
+        risk TEXT,
+
+        pnl REAL,
 
         result TEXT
 
     )
+
     """)
+
+    # ===================================================
+    # Auto Migration
+    # ===================================================
+
+    add_column_if_not_exists(
+
+        cursor,
+
+        "trades",
+
+        "prediction_id",
+
+        "INTEGER",
+
+    )
+
+    add_column_if_not_exists(
+
+        cursor,
+
+        "trades",
+
+        "exit_price",
+
+        "REAL",
+
+    )
+
+    add_column_if_not_exists(
+
+        cursor,
+
+        "trades",
+
+        "closed_at",
+
+        "TEXT",
+
+    )
+
+    add_column_if_not_exists(
+
+        cursor,
+
+        "trades",
+
+        "pnl",
+
+        "REAL",
+
+    )
+
+    add_column_if_not_exists(
+
+        cursor,
+
+        "trades",
+
+        "exit_reason",
+
+        "TEXT",
+
+    )
 
     connection.commit()
 

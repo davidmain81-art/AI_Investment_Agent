@@ -1,10 +1,10 @@
-"""
-Trade Console
-Version 0.5
-"""
-
-
-def print_current_trade(trade):
+def print_current_trade(
+    trade,
+    stats=None,
+):
+    """
+    Print current OPEN trade.
+    """
 
     print()
 
@@ -24,8 +24,20 @@ def print_current_trade(trade):
 
     print(f"Take Profit : {trade['take_profit']}")
 
-    if "confidence" in trade:
-
-        print(f"Confidence  : {trade['confidence']}%")
+    print(f"Confidence  : {trade['confidence']}%")
 
     print(f"Status      : {trade['status']}")
+
+    if stats:
+
+        print()
+
+        print("LIVE STATUS")
+
+        print(f"Current     : {stats['current_price']}")
+
+        print(f"PnL         : {stats['pnl']} %")
+
+        print(f"To TP       : {stats['distance_tp']} %")
+
+        print(f"To SL       : {stats['distance_sl']} %")

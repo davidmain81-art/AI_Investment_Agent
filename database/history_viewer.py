@@ -1,55 +1,79 @@
+"""
+History Viewer
+Version 0.5
+"""
+
+import os
+import sys
+
+# اضافه کردن پوشه اصلی پروژه به مسیر Python
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 from database.database import get_connection
 
 
-def show_history(limit=20):
-    """
-    Display the latest saved market history.
-    """
+def show_trades():
 
     connection = get_connection()
 
     cursor = connection.cursor()
 
-    cursor.execute(
-        """
+    cursor.execute("""
+
         SELECT
+
+            id,
             created_at,
-            btc,
-            crypto_score,
-            iran_score,
-            crypto_signal,
-            iran_signal,
-            winner
-        FROM market_history
-        ORDER BY id DESC
-        LIMIT ?
-        """,
-        (limit,),
-    )
+            asset,
+            signal,
+            entry_price,
+            stop_loss,
+            take_profit,
+            confidence,
+            status
+
+        FROM trades
+
+        ORDER BY id
+
+    """)
 
     rows = cursor.fetchall()
 
     connection.close()
 
+    print()
+
     print("=" * 80)
-    print("AI INVESTMENT HISTORY")
+
+    print("TRADE HISTORY")
+
     print("=" * 80)
 
     if not rows:
-        print("No history found.")
+
+        print("No trades found.")
+
         return
 
     for row in rows:
 
-        print(f"Time          : {row[0]}")
-        print(f"BTC           : {row[1]:,.2f}")
-        print(f"Crypto Score  : {row[2]}")
-        print(f"Iran Score    : {row[3]}")
-        print(f"Crypto Signal : {row[4]}")
-        print(f"Iran Signal   : {row[5]}")
-        print(f"Winner        : {row[6]}")
-        print("-" * 80)
+        print(f"""
+ID          : {row[0]}
+Date        : {row[1]}
+Asset       : {row[2]}
+Signal      : {row[3]}
+Entry       : {row[4]}
+Stop Loss   : {row[5]}
+Take Profit : {row[6]}
+Confidence  : {row[7]}
+Status      : {row[8]}
+{"-" * 80}
+""")
 
 
 if __name__ == "__main__":
-    show_history()
+    show_trades()

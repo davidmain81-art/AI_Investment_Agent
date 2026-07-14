@@ -1,135 +1,210 @@
-from database.trades import close_trade
-from database.predictions import save_prediction_result
-from database.database import get_connection
+"""
+Trade Monitor
+Version 0.6
+"""
+
+from trading.trade_manager import (
+    get_current_trade,
+    create_trade,
+)
+
+from database.trades import (
+    close_trade,
+    update_trade_result,
+)
+
+from database.prediction_results import (
+    save_prediction_result,
+)
 
 
-def get_open_trades():
-    """
-    Return all open trades.
-    """
+class TradeMonitor:
 
-    connection = get_connection()
+    def __init__(self):
 
-    cursor = connection.cursor()
+        self.current_trade = get_current_trade()
 
-    cursor.execute("""
-        SELECT
-            id,
+    # ----------------------------------------------------
+
+    def check_open_trade(self):
+        """
+        Return latest OPEN trade.
+        """
+
+        self.current_trade = get_current_trade()
+
+        return self.current_trade
+
+    # ----------------------------------------------------
+
+    def check_price(self, current_price):
+        """
+        Check if TP or SL has been reached.
+        """
+
+        trade = self.check_open_trade()
+
+        if trade is None:
+            return None
+
+        # ==========================
+        # BUY Trade
+        # ==========================
+
+        if trade["signal"] == "BUY":
+
+            # Take Profit
+
+            if current_price >= trade["take_profit"]:
+
+                pnl = (
+                    (current_price - trade["entry"])
+                    / trade["entry"]
+                ) * 100
+
+                update_trade_result(
+                    trade["id"],
+                    current_price,
+                    pnl,
+                    "TAKE_PROFIT",
+                )
+
+                save_prediction_result(
+                    trade["prediction_id"],
+                    current_price,
+                    pnl,
+                    1,
+                )
+
+                close_trade(trade["id"])
+
+                return "TAKE_PROFIT"
+
+            # Stop Loss
+
+            if current_price <= trade["stop_loss"]:
+
+                pnl = (
+                    (current_price - trade["entry"])
+                    / trade["entry"]
+                ) * 100
+
+                update_trade_result(
+                    trade["id"],
+                    current_price,
+                    pnl,
+                    "STOP_LOSS",
+                )
+
+                save_prediction_result(
+                    trade["prediction_id"],
+                    current_price,
+                    pnl,
+                    0,
+                )
+
+                close_trade(trade["id"])
+
+                return "STOP_LOSS"
+
+        # ==========================
+        # SELL Trade
+        # ==========================
+
+        elif trade["signal"] == "SELL":
+
+            # Take Profit
+
+            if current_price <= trade["take_profit"]:
+
+                pnl = (
+                    (trade["entry"] - current_price)
+                    / trade["entry"]
+                ) * 100
+
+                update_trade_result(
+                    trade["id"],
+                    current_price,
+                    pnl,
+                    "TAKE_PROFIT",
+                )
+
+                save_prediction_result(
+                    trade["prediction_id"],
+                    current_price,
+                    pnl,
+                    1,
+                )
+
+                close_trade(trade["id"])
+
+                return "TAKE_PROFIT"
+
+            # Stop Loss
+
+            if current_price >= trade["stop_loss"]:
+
+                pnl = (
+                    (trade["entry"] - current_price)
+                    / trade["entry"]
+                ) * 100
+
+                update_trade_result(
+                    trade["id"],
+                    current_price,
+                    pnl,
+                    "STOP_LOSS",
+                )
+
+                save_prediction_result(
+                    trade["prediction_id"],
+                    current_price,
+                    pnl,
+                    0,
+                )
+
+                close_trade(trade["id"])
+
+                return "STOP_LOSS"
+
+        return None
+
+    # ----------------------------------------------------
+
+    def evaluate_signal(
+        self,
+        asset,
+        decision,
+        entry_price,
+        stop_loss,
+        take_profit,
+    ):
+        """
+        Compare AI signal with current trade.
+        """
+
+        trade = self.check_open_trade()
+
+        if trade is None:
+
+            return create_trade(
+                asset,
+                decision,
+                entry_price,
+                stop_loss,
+                take_profit,
+            )
+
+        if trade["signal"] == decision["recommendation"]:
+
+            return trade
+
+        close_trade(trade["id"])
+
+        return create_trade(
             asset,
-            signal,
+            decision,
             entry_price,
             stop_loss,
             take_profit,
-            confidence,
-            status
-
-        FROM trades
-
-        WHERE status='OPEN'
-    """)
-
-    rows = cursor.fetchall()
-
-    connection.close()
-
-    trades = []
-
-    for row in rows:
-
-        trades.append({
-
-            "id": row[0],
-            "asset": row[1],
-            "signal": row[2],
-            "entry": row[3],
-            "stop_loss": row[4],
-            "take_profit": row[5],
-            "confidence": row[6],
-            "status": row[7],
-
-        })
-
-    return trades
-
-
-def check_trade(trade, current_price):
-    """
-    Check if trade should be closed.
-    """
-
-    signal = trade["signal"]
-
-    if "BUY" in signal:
-
-        if current_price <= trade["stop_loss"]:
-
-            return "LOSS"
-
-        if current_price >= trade["take_profit"]:
-
-            return "WIN"
-
-    elif "SELL" in signal:
-
-        if current_price >= trade["stop_loss"]:
-
-            return "LOSS"
-
-        if current_price <= trade["take_profit"]:
-
-            return "WIN"
-
-    return None
-
-
-def calculate_pnl(trade, exit_price):
-
-    if "BUY" in trade["signal"]:
-
-        return (
-            (exit_price - trade["entry"])
-            / trade["entry"]
-        ) * 100
-
-    return (
-        (trade["entry"] - exit_price)
-        / trade["entry"]
-    ) * 100
-
-
-def process_trade(trade, current_price):
-    """
-    Process a single trade.
-    """
-
-    result = check_trade(
-        trade,
-        current_price,
-    )
-
-    if result is None:
-        return None
-
-    pnl = calculate_pnl(
-        trade,
-        current_price,
-    )
-
-    close_trade(trade["id"])
-
-    save_prediction_result(
-        prediction_id=trade["id"],
-        exit_price=current_price,
-        pnl=pnl,
-        success=1 if pnl > 0 else 0,
-    )
-
-    return {
-
-        "trade_id": trade["id"],
-
-        "result": result,
-
-        "pnl": round(pnl, 2),
-
-    }
+        )
