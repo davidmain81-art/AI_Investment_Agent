@@ -8,8 +8,10 @@ if ROOT not in sys.path:
 
 import streamlit as st
 
+from dashboard.components.global_panel import render_global
 from engine.core.dashboard_context import DashboardContext
 
+from dashboard.components.iran import render_iran
 from dashboard.components.market import render_market
 from dashboard.components.trade import render_trade
 from dashboard.components.memory import render_memory
@@ -26,3 +28,5 @@ ctx = DashboardContext().build()
 render_market(ctx)
 render_trade(ctx)
 render_memory(ctx)
+render_global(ctx)
+render_iran(ctx)

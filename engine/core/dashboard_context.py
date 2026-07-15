@@ -1,9 +1,12 @@
 """
 Dashboard Context
-Version 1.0
+Version 1.3
 """
 
-from data.crypto import get_crypto_prices
+from engine.services.market_service import MarketService
+from engine.services.decision_service import DecisionService
+from engine.services.global_service import GlobalService
+from engine.iran_engine import IranEngine
 
 from trading.trade_manager import get_current_trade
 from trading.trade_statistics import calculate_trade_statistics
@@ -18,9 +21,41 @@ class DashboardContext:
 
     def build(self):
 
-        prices = get_crypto_prices()
+        # ==========================================
+        # Crypto Market
+        # ==========================================
 
-        btc_price = prices["BTC"]["price"]
+        market_service = MarketService()
+
+        market = market_service.load()
+
+        prices = market["prices"]
+
+        btc_price = market["btc_price"]
+
+        signal = market["signal"]
+
+        risk = market["risk"]
+
+        market_score = market["market_score"]
+
+        # ==========================================
+        # AI Decision
+        # ==========================================
+
+        decision = DecisionService().build(
+
+            signal,
+
+            risk,
+
+            market_score,
+
+        )
+
+        # ==========================================
+        # Current Trade
+        # ==========================================
 
         trade = get_current_trade()
 
@@ -36,7 +71,15 @@ class DashboardContext:
 
             )
 
+        # ==========================================
+        # Memory
+        # ==========================================
+
         memory = load_memory()
+
+        # ==========================================
+        # Backtest
+        # ==========================================
 
         backtest = BacktestEngine()
 
@@ -47,6 +90,30 @@ class DashboardContext:
             results
 
         )
+
+        # ==========================================
+        # Iran Market
+        # ==========================================
+
+        iran = IranEngine().run()
+
+        # ==========================================
+        # Global Recommendation
+        # ==========================================
+
+        global_service = GlobalService()
+
+        global_market = global_service.compare(
+
+            crypto_decision=decision,
+
+            iran_decision=iran["decision"],
+
+        )
+
+        # ==========================================
+        # Context
+        # ==========================================
 
         return {
 
@@ -61,5 +128,15 @@ class DashboardContext:
             "memory": memory,
 
             "performance": performance,
+
+            "iran_market": iran["market"],
+
+            "iran_score": iran["score"],
+
+            "iran_decision": iran["decision"],
+
+            "global_market": global_market,
+
+            "decision": decision,
 
         }

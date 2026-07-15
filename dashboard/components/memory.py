@@ -1,18 +1,20 @@
 import streamlit as st
 import pandas as pd
 
+from memory.memory_database import load_memory
+
 
 def render_memory(ctx):
 
-    st.subheader("🧠 AI Memory")
-
-    rows = ctx["memory"]
+    rows = load_memory()
 
     df = pd.DataFrame(rows)
 
+    st.subheader("🧠 AI Memory")
+
     if len(df) == 0:
 
-        st.info("No AI memories recorded.")
+        st.info("No AI memories.")
 
         return
 
@@ -20,7 +22,7 @@ def render_memory(ctx):
 
         df,
 
-        use_container_width=True,
+        width="stretch",
 
         hide_index=True,
 
@@ -40,12 +42,50 @@ def render_memory(ctx):
 
     c1, c2, c3, c4 = st.columns(4)
 
-    c1.metric("Experience", total)
+    with c1:
 
-    c2.metric("Wins", wins)
+        st.metric(
 
-    c3.metric("Losses", losses)
+            "Experience",
 
-    c4.metric("Win Rate", f"{win_rate}%")
+            total,
 
-    st.metric("Total PnL", total_pnl)
+        )
+
+    with c2:
+
+        st.metric(
+
+            "Wins",
+
+            wins,
+
+        )
+
+    with c3:
+
+        st.metric(
+
+            "Losses",
+
+            losses,
+
+        )
+
+    with c4:
+
+        st.metric(
+
+            "Win Rate",
+
+            f"{win_rate}%",
+
+        )
+
+    st.metric(
+
+        "Total PnL",
+
+        total_pnl,
+
+    )
