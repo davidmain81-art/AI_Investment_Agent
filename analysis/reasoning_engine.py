@@ -1,6 +1,6 @@
 """
 AI Reasoning Engine
-Version 1.0
+Version 2.0
 """
 
 
@@ -30,61 +30,35 @@ class ReasoningEngine:
 
         if signal == "BUY":
 
-            reasons.append(
-                "Trend is bullish."
-            )
+            reasons.append("Trend is bullish.")
 
         elif signal == "SELL":
 
-            reasons.append(
-                "Trend is bearish."
-            )
+            reasons.append("Trend is bearish.")
 
         else:
 
-            reasons.append(
-                "Market is neutral."
-            )
+            reasons.append("Market is neutral.")
 
         # ===========================
         # Risk
         # ===========================
 
-        if risk == "LOW":
-
-            reasons.append(
-                "Risk level is LOW."
-            )
-
-        elif risk == "MEDIUM":
-
-            reasons.append(
-                "Risk level is MEDIUM."
-            )
-
-        else:
-
-            reasons.append(
-                "Risk level is HIGH."
-            )
+        reasons.append(f"Risk level is {risk}.")
 
         # ===========================
-        # Market Score
+        # Market
+        # ===========================
+
+        reasons.append(f"Market Score = {market_score}/100")
+
+        # ===========================
+        # Learning
         # ===========================
 
         reasons.append(
 
-            f"Market Score = {market_score}/100"
-
-        )
-
-        # ===========================
-        # AI Experience
-        # ===========================
-
-        reasons.append(
-
-            f"Historical Win Rate = {ai_stats['confidence']}%"
+            f"Historical Win Rate = {ai_stats['win_rate']}%"
 
         )
 
@@ -94,8 +68,26 @@ class ReasoningEngine:
 
         )
 
+        reasons.append(
+
+            f"Profit Factor = {ai_stats['profit_factor']}"
+
+        )
+
+        reasons.append(
+
+            f"Best Asset = {ai_stats['best_asset']}"
+
+        )
+
+        reasons.append(
+
+            f"Best Signal = {ai_stats['best_signal']}"
+
+        )
+
         # ===========================
-        # Final Confidence
+        # Confidence
         # ===========================
 
         reasons.append(
@@ -103,5 +95,33 @@ class ReasoningEngine:
             f"Final Confidence = {confidence}%"
 
         )
+
+        # ===========================
+        # Final Conclusion
+        # ===========================
+
+        if signal == "BUY":
+
+            reasons.append(
+
+                "AI recommends opening or keeping BUY positions."
+
+            )
+
+        elif signal == "SELL":
+
+            reasons.append(
+
+                "AI recommends avoiding long positions."
+
+            )
+
+        else:
+
+            reasons.append(
+
+                "AI recommends waiting for a better opportunity."
+
+            )
 
         return reasons

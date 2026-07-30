@@ -1,6 +1,6 @@
 """
 Trade Service
-Version 1.1
+Version 2.0
 """
 
 from trading.trade_statistics import calculate_trade_statistics
@@ -16,10 +16,6 @@ class TradeService:
     def __init__(self):
 
         self.lifecycle = TradeLifecycle()
-
-    # ==========================================
-    # Execute
-    # ==========================================
 
     def execute(
 
@@ -39,11 +35,19 @@ class TradeService:
 
         current_trade = get_current_trade()
 
-        # ------------------------------
+        # -----------------------------
+        # Create new trade only if none exists
+        # -----------------------------
 
-        if decision["recommendation"] != "HOLD":
+        if (
 
-            trade = create_trade(
+            current_trade is None
+
+            and decision["recommendation"] != "HOLD"
+
+        ):
+
+            current_trade = create_trade(
 
                 asset=asset,
 
@@ -57,23 +61,31 @@ class TradeService:
 
             )
 
-            if trade:
+        # -----------------------------
+        # Evaluate existing trade
+        # -----------------------------
 
-                current_trade = trade
+        if current_trade:
 
-        # ------------------------------
+            self.lifecycle.evaluate(
 
-        self.lifecycle.evaluate(
+                current_trade,
 
-            current_trade,
+                current_price,
 
-            current_price,
+            )
 
-        )
+        # -----------------------------
+        # Reload trade
+        # -----------------------------
 
         current_trade = get_current_trade()
 
-        # ------------------------------
+        # -----------------------------
+        # Statistics
+        # -----------------------------
+
+        stats = None
 
         if current_trade:
 
@@ -85,15 +97,7 @@ class TradeService:
 
             )
 
-        else:
-
-            stats = None
-
         return current_trade, stats
-
-    # ==========================================
-    # Backward Compatibility
-    # ==========================================
 
     def process(
 

@@ -9,7 +9,7 @@ def calculate_trade_statistics(trade, current_price):
     Calculate live trade statistics.
     """
 
-    entry = float(trade["entry"])
+    entry = float(trade["entry_price"])
 
     signal = str(trade["signal"]).upper().strip()
 

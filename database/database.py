@@ -3,8 +3,12 @@ import sqlite3
 DATABASE_NAME = "investment_agent.db"
 
 
-def get_connection():
-    return sqlite3.connect(DATABASE_NAME)
+def get_connection(database_name=None):
+
+    if database_name is None:
+        database_name = DATABASE_NAME
+
+    return sqlite3.connect(database_name)
 
 
 def add_column_if_not_exists(cursor, table, column, definition):

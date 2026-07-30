@@ -58,8 +58,8 @@ class TradeMonitor:
             if current_price >= trade["take_profit"]:
 
                 pnl = (
-                    (current_price - trade["entry"])
-                    / trade["entry"]
+                    (current_price - trade["entry_price"])
+                    / trade["entry_price"]
                 ) * 100
 
                 update_trade_result(
@@ -85,8 +85,8 @@ class TradeMonitor:
             if current_price <= trade["stop_loss"]:
 
                 pnl = (
-                    (current_price - trade["entry"])
-                    / trade["entry"]
+                    (current_price - trade["entry_price"])
+                    / trade["entry_price"]
                 ) * 100
 
                 update_trade_result(
@@ -118,8 +118,8 @@ class TradeMonitor:
             if current_price <= trade["take_profit"]:
 
                 pnl = (
-                    (trade["entry"] - current_price)
-                    / trade["entry"]
+                    (trade["entry_price"] - current_price)
+                    / trade["entry_price"]
                 ) * 100
 
                 update_trade_result(
@@ -145,8 +145,8 @@ class TradeMonitor:
             if current_price >= trade["stop_loss"]:
 
                 pnl = (
-                    (trade["entry"] - current_price)
-                    / trade["entry"]
+                    (trade["entry_price"] - current_price)
+                    / trade["entry_price"]
                 ) * 100
 
                 update_trade_result(

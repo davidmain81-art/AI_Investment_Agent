@@ -56,25 +56,26 @@ def print_decision(decision):
 
     print(f"Recommendation : {decision['recommendation']}")
     print(f"Confidence     : {decision['confidence']}%")
+    print(f"AI Score       : {decision.get('ai_score',0)}/100")
 
     print()
 
     print("Reasons")
+    print("-" * 50)
 
     for reason in decision["reasons"]:
-
         print(f"✓ {reason}")
 
     print()
 
     print("Suggested Position")
-
+    print("-" * 50)
     print(decision["position"])
 
     print()
 
     print("Holding Time")
-
+    print("-" * 50)
     print(decision["holding"])
 
 

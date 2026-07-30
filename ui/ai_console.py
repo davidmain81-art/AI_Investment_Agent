@@ -188,3 +188,18 @@ def print_risk(stop_loss, take_profit):
 
     print(f"Stop Loss  : {format_price(stop_loss)}")
     print(f"Take Profit: {format_price(take_profit)}")
+
+def print_ai_experience(stats):
+
+    print("\n🧠 AI EXPERIENCE")
+    print("-" * 50)
+
+    print(f"Experience    : {stats['experience']} trades")
+    print(f"Wins          : {stats['wins']}")
+    print(f"Losses        : {stats['losses']}")
+    print(f"Win Rate      : {stats['win_rate']}%")
+    print(f"Average Win   : {stats['average_win']}")
+    print(f"Average Loss  : {stats['average_loss']}")
+    print(f"Profit Factor : {stats['profit_factor']}")
+    print(f"Best Asset    : {stats['best_asset']}")
+    print(f"Best Signal   : {stats['best_signal']}")

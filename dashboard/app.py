@@ -8,6 +8,8 @@ if ROOT not in sys.path:
 
 import streamlit as st
 
+from dashboard.components.portfolio import render_portfolio
+from dashboard.components.reasoning import render_reasoning
 from dashboard.components.global_panel import render_global
 from engine.core.dashboard_context import DashboardContext
 
@@ -15,6 +17,7 @@ from dashboard.components.iran import render_iran
 from dashboard.components.market import render_market
 from dashboard.components.trade import render_trade
 from dashboard.components.memory import render_memory
+from dashboard.components.decision import render_decision
 
 st.set_page_config(
     page_title="AI Investment Agent",
@@ -26,7 +29,10 @@ st.title("AI Investment Agent Dashboard")
 ctx = DashboardContext().build()
 
 render_market(ctx)
+render_decision(ctx)
+render_portfolio(ctx)
 render_trade(ctx)
 render_memory(ctx)
 render_global(ctx)
 render_iran(ctx)
+render_reasoning(ctx)

@@ -61,6 +61,14 @@ def close_trade(
             * 100,
             2,
         )
+    if pnl > 0:
+        result = "WIN"
+    elif pnl < 0:
+        result = "LOSS"
+
+    else:
+        result = "BREAKEVEN"
+
 
     cursor.execute(
         """
@@ -101,13 +109,21 @@ def close_trade(
 
         "asset": trade["asset"],
 
+        "market": "CRYPTO",
+
         "signal": trade["signal"],
 
         "entry_price": trade["entry_price"],
 
         "exit_price": exit_price,
 
+        "quantity": 1,
+
+        "gross_pnl": pnl,
+
         "pnl": pnl,
+
+        "result": result,
 
         "confidence": trade["confidence"],
 

@@ -1,6 +1,8 @@
 import sqlite3
 
-DATABASE = "investment_agent.db"
+from config.database import get_database
+
+DATABASE = get_database()
 
 
 def get_connection():
@@ -13,7 +15,6 @@ def initialize_memory():
     cur = conn.cursor()
 
     cur.execute("""
-
     CREATE TABLE IF NOT EXISTS memory(
 
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,7 +23,19 @@ def initialize_memory():
 
         asset TEXT,
 
+        market TEXT,
+
         signal TEXT,
+
+        entry_price REAL,
+
+        exit_price REAL,
+
+        quantity REAL,
+
+        gross_pnl REAL,
+
+        cost REAL,
 
         pnl REAL,
 
@@ -31,7 +44,6 @@ def initialize_memory():
         lesson TEXT
 
     )
-
     """)
 
     conn.commit()
@@ -40,64 +52,64 @@ def initialize_memory():
 
 def save_memory(
 
-    asset,
-
-    signal,
-
-    pnl,
-
-    result,
-
-    lesson,
-
     created_at,
+    asset,
+    market,
+    signal,
+    entry_price,
+    exit_price,
+    quantity,
+    gross_pnl,
+    cost,
+    pnl,
+    result,
+    lesson,
 
 ):
 
     conn = get_connection()
-
     cur = conn.cursor()
 
     cur.execute(
 
         """
-
         INSERT INTO memory(
 
             created_at,
-
             asset,
-
+            market,
             signal,
-
+            entry_price,
+            exit_price,
+            quantity,
+            gross_pnl,
+            cost,
             pnl,
-
             result,
-
             lesson
 
         )
 
         VALUES(
 
-            ?,?,?,?,?,?
+            ?,?,?,?,?,?,?,?,?,?,?,?
 
         )
-
         """,
 
         (
 
             created_at,
-
             asset,
-
+            market,
             signal,
-
+            entry_price,
+            exit_price,
+            quantity,
+            gross_pnl,
+            cost,
             pnl,
-
             result,
-
             lesson,
 
         ),
@@ -105,12 +117,12 @@ def save_memory(
     )
 
     conn.commit()
-
     conn.close()
 
 
 def load_memory():
-
+     
+    
     conn = get_connection()
 
     conn.row_factory = sqlite3.Row

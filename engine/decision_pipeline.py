@@ -1,47 +1,30 @@
 """
-Decision Pipeline
-Version 0.1
+Trade Pipeline
+Version 1.1
 """
 
+from memory.memory_engine import MemoryEngine
 
-class DecisionPipeline:
+
+class TradePipeline:
 
     def __init__(self):
 
-        self.steps = []
+        self.memory = MemoryEngine()
 
-    def add_step(
+    def process(self, trade):
 
-        self,
+        print("=" * 60)
+        print("TRADE PIPELINE EXECUTED")
+        print(trade)
+        print("=" * 60)
 
-        name,
+        if trade is None:
+            return
 
-        func,
+        if trade.get("status") != "CLOSED":
+            return
 
-    ):
+        self.memory.remember_trade(trade)
 
-        self.steps.append(
-
-            {
-
-                "name": name,
-
-                "func": func,
-
-            }
-
-        )
-
-    def run(
-
-        self,
-
-        context,
-
-    ):
-
-        for step in self.steps:
-
-            context = step["func"](context)
-
-        return context
+        print("MEMORY SAVED")

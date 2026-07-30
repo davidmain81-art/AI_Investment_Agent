@@ -1,3 +1,4 @@
+from engine.trade_pipeline import TradePipeline
 from database.predictions import save_prediction
 from database.prediction_results import save_prediction_result
 
@@ -67,14 +68,14 @@ def create_trade(
         if current_trade["signal"] == decision["recommendation"]:
 
             return current_trade
-
-        exit_price = entry_price
+        
+        return current_trade
 
         pnl = calculate_pnl(
 
             current_trade["signal"],
 
-            current_trade["entry"],
+            current_trade["entry_price"],
 
             exit_price,
 
@@ -156,7 +157,7 @@ def create_trade(
 
         "signal": decision["recommendation"],
 
-        "entry": entry_price,
+        "entry_price": entry_price,
 
         "stop_loss": stop_loss,
 

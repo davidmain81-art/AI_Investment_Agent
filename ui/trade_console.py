@@ -18,7 +18,7 @@ def print_current_trade(
 
     print(f"Signal      : {trade['signal']}")
 
-    print(f"Entry       : {trade['entry']}")
+    print(f"Entry       : {trade['entry_price']}")
 
     print(f"Stop Loss   : {trade['stop_loss']}")
 

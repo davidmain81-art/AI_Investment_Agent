@@ -1,9 +1,15 @@
 """
 Decision Engine
-Version 2.0
+Version 6.0 Stable
 """
 
+from analysis.ai_optimizer import AIOptimizer
+from learning.learning_engine import LearningEngine
+from analysis.ai_score_engine import AIScoreEngine
 from analysis.confidence_engine import ConfidenceEngine
+from analysis.reasoning_engine import ReasoningEngine
+from analysis.execution_safety import ExecutionSafety
+from providers.health_provider import HealthProvider
 
 
 def make_decision(
@@ -12,115 +18,93 @@ def make_decision(
     market_score,
 ):
 
-    confidence_engine = ConfidenceEngine()
+    learning = LearningEngine().analyze()
+    optimizer_score = AIOptimizer().optimize(learning)
 
-    confidence = confidence_engine.calculate(
+    raw_optimizer_score = optimizer_score
+
+    optimizer_score = max(
+        -20,
+        min(
+            20,
+            optimizer_score
+        )
+    )
+
+    confidence = ConfidenceEngine().calculate(
         market_score,
         risk,
     )
 
-    reasons = []
+    ai_score = AIScoreEngine().calculate(
+        market_score=market_score,
+        learning=learning,
+        confidence=confidence,
+        risk=risk,
+        optimizer_score=optimizer_score,
+    )
 
-    # -----------------------------
-    # Market Description
-    # -----------------------------
+    # ===========================================
+    # Execution Safety Check
+    # ===========================================
 
-    if signal == "STRONG BUY 🟢":
-        reasons.append("Strong bullish trend detected.")
+    safety = ExecutionSafety().check(
+        ai_score=ai_score,
+        confidence=confidence,
+        latency=HealthProvider().get_latency(),
+        risk=risk,
+    )
 
-    elif signal == "BUY 🟢":
-        reasons.append("Bullish trend detected.")
-
-    elif signal == "SELL 🔴":
-        reasons.append("Bearish trend detected.")
-
-    elif signal == "STRONG SELL 🔴":
-        reasons.append("Strong bearish trend detected.")
-
-    else:
-        reasons.append("Sideway market detected.")
-
-    reasons.append(f"Risk level is {risk}.")
-    reasons.append(f"Market Score = {market_score}/100")
-
-    # -----------------------------
-    # Decision Logic
-    # -----------------------------
-
-    if signal == "STRONG BUY 🟢":
-
-        recommendation = "BUY"
-
-        if confidence >= 80:
-
-            position = "15%"
-            holding = "5-10 Days"
-
-        elif confidence >= 60:
-
-            position = "10%"
-            holding = "3-7 Days"
-
-        else:
-
-            position = "5%"
-            holding = "1-3 Days"
-
-    elif signal == "BUY 🟢":
-
-        recommendation = "BUY"
-
-        if confidence >= 70:
-
-            position = "10%"
-
-        else:
-
-            position = "5%"
-
-        holding = "2-5 Days"
-
-    elif signal == "STRONG SELL 🔴":
-
-        recommendation = "SELL"
-
-        position = "15%"
-        holding = "5-10 Days"
-
-    elif signal == "SELL 🔴":
-
-        recommendation = "SELL"
-
+    if ai_score >= 80:
+        recommendation = "STRONG BUY"
         position = "10%"
-        holding = "2-5 Days"
+        holding = "Swing"
 
-    else:
+    elif ai_score >= 65:
+        recommendation = "BUY"
+        position = "5%"
+        holding = "Swing"
 
+    elif ai_score >= 45:
         recommendation = "HOLD"
-
         position = "2%"
         holding = "Scalp"
 
-    # -----------------------------
-    # Confidence explanation
-    # -----------------------------
+    else:
+        recommendation = "SELL"
+        position = "0%"
+        holding = "None"
 
-    reasons.append(f"Final Confidence = {confidence}%")
-
-    return {
-
+    reasons = ReasoningEngine().build(
+        recommendation,
+        risk,
+        market_score,
+        confidence,
+        learning,
+    )
+  
+    result = {
         "recommendation": recommendation,
-
         "confidence": confidence,
+        "ai_score": ai_score,
+
+        "optimizer_score": raw_optimizer_score,
+        "optimizer_used": optimizer_score,
 
         "position": position,
-
         "holding": holding,
-
         "market_score": market_score,
-
         "risk": risk,
-
+        "learning": learning,
         "reasons": reasons,
 
+        "safety": safety,
+        
     }
+
+    print("=" * 60)
+    print("DECISION DEBUG")
+    print(result)
+    print("=" * 60)
+
+    return result

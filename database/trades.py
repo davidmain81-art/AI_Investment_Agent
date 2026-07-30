@@ -165,7 +165,7 @@ def get_last_open_trade():
         "id": row[0],
         "asset": row[1],
         "signal": row[2],
-        "entry": row[3],
+        "entry_price": row[3],
         "stop_loss": row[4],
         "take_profit": row[5],
         "confidence": row[6],

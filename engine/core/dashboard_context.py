@@ -53,6 +53,8 @@ class DashboardContext:
 
         )
 
+        from analysis.reasoning_engine import ReasoningEngine
+
         # ==========================================
         # Current Trade
         # ==========================================
@@ -97,6 +99,31 @@ class DashboardContext:
 
         iran = IranEngine().run()
 
+        global_service = GlobalService()
+
+        global_market = global_service.compare(
+
+            crypto_decision=decision,
+
+            iran_decision=iran["decision"],
+
+        )
+
+        from advisor.global_advisor import build_market_list
+        from advisor.allocation_engine import allocate_capital
+
+        markets = build_market_list(
+
+            decision,
+            market_score,
+
+            iran["decision"],
+            iran["score"],
+
+        )
+
+        portfolio = allocate_capital(markets)
+
         # ==========================================
         # Global Recommendation
         # ==========================================
@@ -136,6 +163,10 @@ class DashboardContext:
             "iran_decision": iran["decision"],
 
             "global_market": global_market,
+
+            "portfolio": portfolio,
+
+            "decision": decision,
 
             "decision": decision,
 

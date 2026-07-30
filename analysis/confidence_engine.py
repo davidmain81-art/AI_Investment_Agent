@@ -1,6 +1,6 @@
 """
 AI Confidence Engine
-Version 1.0
+Version 2.1
 """
 
 from learning.learning_engine import LearningEngine
@@ -26,23 +26,86 @@ class ConfidenceEngine:
 
         confidence = 50
 
-        # Historical Performance
-        confidence += (stats["confidence"] - 50) * 0.40
+        # -------------------------
+        # Win Rate
+        # -------------------------
 
-        # Market Score
-        confidence += (market_score - 50) * 0.50
+        confidence += (stats["win_rate"] - 50) * 0.10
 
-        # Risk
-        if risk == "LOW":
+        # -------------------------
+        # Profit Factor
+        # -------------------------
+
+        if stats["profit_factor"] == 0:
+
+            confidence -= 10
+
+        elif stats["profit_factor"] > 1:
+
+            confidence += min(
+
+                stats["profit_factor"],
+
+                3,
+
+            ) * 2
+
+        # -------------------------
+        # Experience
+        # -------------------------
+
+        exp = stats["experience"]
+
+        if exp >= 100:
+
+            confidence += 20
+
+        elif exp >= 50:
+
+            confidence += 15
+
+        elif exp >= 20:
 
             confidence += 10
 
+        elif exp >= 10:
+
+            confidence += 5
+
+        elif exp >= 5:
+
+            confidence += 2
+
+        # -------------------------
+        # Market Score
+        # -------------------------
+
+        confidence += (market_score - 50) * 0.50
+
+        # -------------------------
+        # Risk
+        # -------------------------
+
+        if risk == "LOW":
+
+            confidence += 5
+
         elif risk == "HIGH":
 
-            confidence -= 15
+            confidence -= 10
 
-        confidence = round(confidence)
+        confidence = max(
 
-        confidence = max(0, min(99, confidence))
+            30,
+
+            min(
+
+                95,
+
+                round(confidence),
+
+            ),
+
+        )
 
         return confidence

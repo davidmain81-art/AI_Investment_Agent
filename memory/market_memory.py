@@ -6,10 +6,10 @@ Version 0.1
 import sqlite3
 
 
-DATABASE = "investment.db"
+DATABASE = "investment_agent.db"
 
 
-def create_memory_table():
+def initialize_market_memory():
 
     conn = sqlite3.connect(DATABASE)
 
@@ -45,7 +45,7 @@ def create_memory_table():
     conn.close()
 
 
-def save_memory(memory):
+def save_market_memory(memory):
 
     conn = sqlite3.connect(DATABASE)
 
@@ -87,7 +87,7 @@ def save_memory(memory):
     conn.close()
 
 
-def load_memory():
+def load_market_memory():
 
     conn = sqlite3.connect(DATABASE)
 
