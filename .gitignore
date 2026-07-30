@@ -16,3 +16,5 @@ venv/
 backtest/
 database/*.db
 *.db
+
+logs/
