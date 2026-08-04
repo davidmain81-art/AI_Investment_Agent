@@ -4,6 +4,7 @@ Version 3.0 Stable
 """
 
 from memory.memory_database import load_memory
+from learning.experience_manager import ExperienceManager
 
 
 class LearningEngine:
@@ -13,7 +14,11 @@ class LearningEngine:
 
     def analyze(self):
 
-        rows = load_memory()
+        memory_rows = load_memory()
+
+        paper_stats = ExperienceManager().get_statistics()
+
+        rows = memory_rows
 
         wins = 0
         losses = 0
@@ -114,12 +119,20 @@ class LearningEngine:
             return {
 
                 "experience": 0,
+
+                "paper_trades": paper_stats["trades"],
+                "paper_win_rate": paper_stats["win_rate"],
+                "paper_total_profit": paper_stats["total_pnl"],
+
                 "wins": 0,
                 "losses": 0,
                 "win_rate": 0,
+
                 "average_win": 0,
                 "average_loss": 0,
+
                 "profit_factor": 1,
+
                 "best_asset": "UNKNOWN",
                 "best_signal": "UNKNOWN",
 
@@ -132,11 +145,13 @@ class LearningEngine:
 
                 "current_win_streak": 0,
                 "current_loss_streak": 0,
+
                 "longest_win_streak": 0,
                 "longest_loss_streak": 0,
 
                 "average_trade": 0,
                 "expectancy": 0,
+
                 "max_drawdown": 0,
                 "recovery_factor": 0,
 
@@ -202,7 +217,9 @@ class LearningEngine:
 
         return {
 
-            "experience": experience,
+            "paper_trades": experience["trades"],
+            "paper_win_rate": experience["win_rate"],
+            "paper_total_profit": experience["total_pnl"],
             "wins": wins,
             "losses": losses,
             "win_rate": win_rate,

@@ -1,48 +1,52 @@
 """
-Market Engine
-Version 0.5
+Market Service
+Version 2.0
 """
 
 from data.crypto import get_crypto_prices
+from providers.binance_candle_provider import BinanceCandleProvider
+
 from logs.data_logger import save_market_data
 
 from analysis.market_analysis import analyze_market
 from analysis.market_score import calculate_market_score
-from analysis.decision_engine import make_decision
 
 
-class MarketEngine:
+class MarketService:
 
-    def run(self):
+    def load(self):
 
+        # قیمت لحظه‌ای
         prices = get_crypto_prices()
 
         save_market_data(prices)
 
-        signal, risk = analyze_market(prices)
+        # کندل‌های واقعی
+        df = BinanceCandleProvider().load()
 
-        score = calculate_market_score(prices)
+        # تحلیل بازار
+        signal, risk = analyze_market(
+            prices,
+            df,
+        )
 
-        decision = make_decision(
-
-            signal,
-
-            risk,
-
-            score,
-
+        market_score = calculate_market_score(
+            prices,
+            df,
         )
 
         return {
 
             "prices": prices,
 
+            "btc_price": prices["BTC"]["price"],
+
             "signal": signal,
 
             "risk": risk,
 
-            "score": score,
+            "market_score": market_score,
 
-            "decision": decision,
+            "df": df,
 
         }

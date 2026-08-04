@@ -1,6 +1,6 @@
 """
 Decision Service
-Version 1.0
+Version 2.0
 """
 
 from analysis.decision_engine import make_decision
@@ -18,6 +18,8 @@ class DecisionService:
 
         market_score,
 
+        df,
+
     ):
 
         decision = make_decision(
@@ -27,6 +29,8 @@ class DecisionService:
             risk,
 
             market_score,
+
+            df,
 
         )
 

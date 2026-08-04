@@ -39,19 +39,23 @@ class DashboardContext:
 
         market_score = market["market_score"]
 
+        df = market["df"]
+
         # ==========================================
         # AI Decision
         # ==========================================
 
         decision = DecisionService().build(
 
-            signal,
+        signal,
 
-            risk,
+        risk,
 
-            market_score,
+        market_score,
 
-        )
+        df,
+
+    )
 
         from analysis.reasoning_engine import ReasoningEngine
 

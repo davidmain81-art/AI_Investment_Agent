@@ -1,46 +1,90 @@
-def analyze_market(prices):
-    """
-    Analyze market using BTC price and daily change.
-    """
+"""
+Market Analysis
+Version 2.0
+"""
 
-    btc_price = prices["BTC"]["price"]
+from analysis.indicators_engine import IndicatorsEngine
+
+
+def analyze_market(prices, df):
+
+    indicators = IndicatorsEngine().calculate(df)
+
+    score = 0
+
+    # ===========================
+    # EMA Trend
+    # ===========================
+
+    if indicators["ema20"] > indicators["ema50"]:
+        score += 10
+    else:
+        score -= 10
+
+    # ===========================
+    # RSI
+    # ===========================
+
+    if indicators["rsi"] < 30:
+        score += 15
+
+    elif indicators["rsi"] > 70:
+        score -= 15
+
+    # ===========================
+    # MFI
+    # ===========================
+
+    if indicators["mfi"] < 20:
+        score += 10
+
+    elif indicators["mfi"] > 80:
+        score -= 10
+
+    # ===========================
+    # BTC Daily Change
+    # ===========================
+
     btc_change = prices["BTC"]["change"]
 
-    if btc_price >= 60000:
+    if btc_change > 2:
+        score += 10
 
-        if btc_change >= 2:
-            signal = "STRONG BUY 🟢"
-            risk = "LOW"
+    elif btc_change < -2:
+        score -= 10
 
-        elif btc_change >= 0:
-            signal = "BUY 🟢"
-            risk = "LOW"
+    # ===========================
+    # Trend
+    # ===========================
 
-        elif btc_change > -2:
-            signal = "HOLD 🟡"
-            risk = "MEDIUM"
+    if indicators["trend"] == "UP":
+        score += 10
 
-        else:
-            signal = "SELL 🔴"
-            risk = "HIGH"
+    elif indicators["trend"] == "DOWN":
+        score -= 10
 
-    elif btc_price >= 50000:
+    # ===========================
+    # Final Signal
+    # ===========================
 
-        if btc_change >= 2:
-            signal = "BUY 🟢"
-            risk = "MEDIUM"
+    if score >= 30:
 
-        elif btc_change >= 0:
-            signal = "HOLD 🟡"
-            risk = "MEDIUM"
+        signal = "STRONG BUY 🟢"
+        risk = "LOW"
 
-        else:
-            signal = "SELL 🔴"
-            risk = "HIGH"
+    elif score >= 15:
+
+        signal = "BUY 🟢"
+        risk = "LOW"
+
+    elif score >= 0:
+
+        signal = "HOLD 🟡"
+        risk = "MEDIUM"
 
     else:
 
         signal = "SELL 🔴"
         risk = "HIGH"
 
-    return signal, risk
+    return signal, risk, score, indicators
