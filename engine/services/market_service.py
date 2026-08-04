@@ -58,4 +58,6 @@ class MarketService:
 
             "btc_price": prices["BTC"]["price"],
 
+            "df": df,
+
         }

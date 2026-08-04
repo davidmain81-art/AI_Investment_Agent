@@ -12464,3 +12464,63 @@
 2026-07-29 11:58:49.495456 : Cycle Finished
 2026-07-29 11:59:49.497524 : Engine Started
 2026-07-29 11:59:49.544566 : Cycle Finished
+2026-08-04 07:00:41.274636 : Live Engine Started
+2026-08-04 07:00:41.293285 : Engine Started
+2026-08-04 07:00:42.670978 : 'ema20'
+2026-08-04 07:01:42.672279 : Engine Started
+2026-08-04 07:01:43.245523 : 'ema20'
+2026-08-04 07:10:07.036253 : Live Engine Started
+2026-08-04 07:10:07.037089 : Engine Started
+2026-08-04 07:10:07.973312 : 'rsi'
+2026-08-04 07:11:07.977741 : Engine Started
+2026-08-04 07:11:08.537264 : 'rsi'
+2026-08-04 07:12:08.541216 : Engine Started
+2026-08-04 07:12:09.119713 : 'rsi'
+2026-08-04 07:13:09.123784 : Engine Started
+2026-08-04 07:13:24.436639 : 'rsi'
+2026-08-04 07:14:24.443470 : Engine Started
+2026-08-04 07:14:39.668137 : 'rsi'
+2026-08-04 07:15:39.672398 : Engine Started
+2026-08-04 07:15:54.958228 : 'rsi'
+2026-08-04 07:16:54.962589 : Engine Started
+2026-08-04 07:16:56.164501 : 'rsi'
+2026-08-04 07:17:56.167695 : Engine Started
+2026-08-04 07:17:57.061693 : 'rsi'
+2026-08-04 07:25:53.198271 : Live Engine Started
+2026-08-04 07:25:53.200034 : Engine Started
+2026-08-04 07:25:53.802471 : DecisionService.build() missing 1 required positional argument: 'df'
+2026-08-04 07:26:22.680571 : Live Engine Started
+2026-08-04 07:26:22.682480 : Engine Started
+2026-08-04 07:26:23.153772 : DecisionService.build() missing 1 required positional argument: 'df'
+2026-08-04 07:27:23.157874 : Engine Started
+2026-08-04 07:27:24.010759 : DecisionService.build() missing 1 required positional argument: 'df'
+2026-08-04 07:28:24.013893 : Engine Started
+2026-08-04 07:28:24.988381 : DecisionService.build() missing 1 required positional argument: 'df'
+2026-08-04 07:36:48.445100 : Live Engine Started
+2026-08-04 07:36:48.446059 : Engine Started
+2026-08-04 07:36:48.965998 : 'df'
+2026-08-04 07:37:48.967308 : Engine Started
+2026-08-04 07:37:49.534281 : 'df'
+2026-08-04 07:38:49.535458 : Engine Started
+2026-08-04 07:38:50.465759 : 'df'
+2026-08-04 07:39:50.466921 : Engine Started
+2026-08-04 07:39:51.015276 : 'df'
+2026-08-04 07:40:51.016313 : Engine Started
+2026-08-04 07:40:51.573100 : 'df'
+2026-08-04 07:41:51.574159 : Engine Started
+2026-08-04 07:41:52.763580 : 'df'
+2026-08-04 07:42:08.206474 : Live Engine Started
+2026-08-04 07:42:08.209063 : Engine Started
+2026-08-04 07:42:09.275675 : 'int' object is not subscriptable
+2026-08-04 07:58:48.650130 : Live Engine Started
+2026-08-04 07:58:48.651061 : Engine Started
+2026-08-04 07:58:49.231730 : 'experience'
+2026-08-04 08:04:24.924367 : Live Engine Started
+2026-08-04 08:04:24.925293 : Engine Started
+2026-08-04 08:04:50.601503 : Cycle Finished
+2026-08-04 08:05:50.602647 : Engine Started
+2026-08-04 08:06:01.596151 : Cycle Finished
+2026-08-04 08:07:01.597168 : Engine Started
+2026-08-04 08:07:12.421351 : Cycle Finished
+2026-08-04 08:08:12.423232 : Engine Started
+2026-08-04 08:08:23.257292 : Cycle Finished

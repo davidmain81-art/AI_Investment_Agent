@@ -30,10 +30,13 @@ class InvestmentEngine:
 
         market_score = market["market_score"]
 
+        df = market["df"]
+
         # ==============================
         # Decision
         # ==============================
 
+        
         decision = self.services.decision.build(
 
             signal,
@@ -42,8 +45,10 @@ class InvestmentEngine:
 
             market_score,
 
-        )
+            df,
 
+        )
+        
         # ==============================
         # Portfolio
         # ==============================

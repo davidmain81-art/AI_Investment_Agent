@@ -98,9 +98,12 @@ class LiveEngine:
             except Exception as e:
 
 
+                
                 print("Engine Error")
-
                 print(e)
+
+                import traceback
+                traceback.print_exc()
 
                 self.write_log(
                     str(e)

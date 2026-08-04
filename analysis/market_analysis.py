@@ -10,13 +10,15 @@ def analyze_market(prices, df):
 
     indicators = IndicatorsEngine().calculate(df)
 
+    print(indicators.keys())
+
     score = 0
 
     # ===========================
     # EMA Trend
     # ===========================
 
-    if indicators["ema20"] > indicators["ema50"]:
+    if indicators["EMA20"] > indicators["EMA50"]:
         score += 10
     else:
         score -= 10
@@ -25,20 +27,20 @@ def analyze_market(prices, df):
     # RSI
     # ===========================
 
-    if indicators["rsi"] < 30:
+    if indicators["RSI"] < 30:
         score += 15
 
-    elif indicators["rsi"] > 70:
+    elif indicators["RSI"] > 70:
         score -= 15
 
     # ===========================
     # MFI
     # ===========================
 
-    if indicators["mfi"] < 20:
+    if indicators["MFI"] < 20:
         score += 10
 
-    elif indicators["mfi"] > 80:
+    elif indicators["MFI"] > 80:
         score -= 10
 
     # ===========================
@@ -57,11 +59,17 @@ def analyze_market(prices, df):
     # Trend
     # ===========================
 
-    if indicators["trend"] == "UP":
+    if indicators["EMA20"] > indicators["EMA50"]:
+
         score += 10
 
-    elif indicators["trend"] == "DOWN":
+        trend = "UP"
+
+    else:
+
         score -= 10
+
+        trend = "DOWN"
 
     # ===========================
     # Final Signal
@@ -86,5 +94,7 @@ def analyze_market(prices, df):
 
         signal = "SELL 🔴"
         risk = "HIGH"
+
+    indicators["trend"] = trend
 
     return signal, risk, score, indicators
