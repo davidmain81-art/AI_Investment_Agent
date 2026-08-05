@@ -1,6 +1,6 @@
 """
 Trades Database
-Version 0.7
+Version 0.8
 """
 
 from datetime import datetime
@@ -76,6 +76,7 @@ def close_trade(
     connection = get_connection()
     cursor = connection.cursor()
 
+
     cursor.execute(
         """
         UPDATE trades
@@ -89,6 +90,7 @@ def close_trade(
             closed_at=?
 
         WHERE id=?
+
         """,
         (
             status,
@@ -100,8 +102,57 @@ def close_trade(
         ),
     )
 
+
     connection.commit()
+
+
+    cursor.execute(
+        """
+        SELECT
+
+            id,
+            asset,
+            signal,
+            entry_price,
+            stop_loss,
+            take_profit,
+            exit_price,
+            pnl,
+            exit_reason,
+            status
+
+        FROM trades
+
+        WHERE id=?
+
+        """,
+        (trade_id,),
+    )
+
+
+    row = cursor.fetchone()
+
     connection.close()
+
+
+    if row is None:
+        return None
+
+
+    return {
+
+        "id": row[0],
+        "asset": row[1],
+        "signal": row[2],
+        "entry_price": row[3],
+        "stop_loss": row[4],
+        "take_profit": row[5],
+        "exit_price": row[6],
+        "pnl": row[7],
+        "exit_reason": row[8],
+        "status": row[9],
+
+    }
 
 
 # --------------------------------------------------------
@@ -156,9 +207,10 @@ def get_last_open_trade():
 
     connection.close()
 
-    if row is None:
 
+    if row is None:
         return None
+
 
     return {
 

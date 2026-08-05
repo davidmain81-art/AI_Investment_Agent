@@ -1,6 +1,6 @@
 """
 Pattern Recognition Engine
-Version 1.1
+Version 1.2
 """
 
 import sqlite3
@@ -110,7 +110,9 @@ class PatternEngine:
                 "pattern":
                 f"RSI < {threshold}",
 
-                "trades":0
+                "trades":0,
+
+                "win_rate":0
 
             }
 
@@ -171,7 +173,9 @@ class PatternEngine:
                 "pattern":
                 "EMA20 > EMA50",
 
-                "trades":0
+                "trades":0,
+
+                "win_rate":0
 
             }
 
@@ -200,6 +204,64 @@ class PatternEngine:
                 wins / len(pattern) *100,
                 2
             )
+
+        }
+
+
+
+    # ==========================
+    # Pattern Score Generator
+    # ==========================
+
+    def analyze(self):
+
+
+        rsi_pattern = self.analyze_rsi()
+
+        ema_pattern = self.analyze_ema_trend()
+
+
+        scores = []
+
+
+        if rsi_pattern.get("trades",0) > 0:
+
+            scores.append(
+                rsi_pattern.get("win_rate",0)
+            )
+
+
+        if ema_pattern.get("trades",0) > 0:
+
+            scores.append(
+                ema_pattern.get("win_rate",0)
+            )
+
+
+        if len(scores)==0:
+
+            pattern_score = 0
+
+
+        else:
+
+            pattern_score = round(
+                sum(scores) / len(scores),
+                2
+            )
+
+
+        return {
+
+            "pattern_score": pattern_score,
+
+            "patterns": {
+
+                "RSI": rsi_pattern,
+
+                "EMA": ema_pattern
+
+            }
 
         }
 

@@ -103,6 +103,9 @@ def close_trade(
 
     conn.close()
 
+    print("CLOSE TRADE RESULT:")
+    print(result, pnl)
+
     return {
 
         "id": trade["id"],

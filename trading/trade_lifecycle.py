@@ -38,7 +38,7 @@ class TradeLifecycle:
         # BUY
         # ==========================================
 
-        if signal == "BUY":
+        if "BUY" in signal:
 
             print("Checking BUY trade...")
 

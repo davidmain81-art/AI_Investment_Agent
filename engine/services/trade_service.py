@@ -33,6 +33,17 @@ class TradeService:
 
     ):
 
+        # -----------------------------
+        # Execution Safety Gate
+        # -----------------------------
+
+        if not decision.get("safety", {}).get("allowed", False):
+
+            print("TRADE BLOCKED BY EXECUTION SAFETY")
+
+            return None, None
+
+
         current_trade = get_current_trade()
 
         # -----------------------------
@@ -44,6 +55,8 @@ class TradeService:
             current_trade is None
 
             and decision["recommendation"] != "HOLD"
+
+            and decision.get("safety", {}).get("allowed", False)
 
         ):
 

@@ -28,7 +28,7 @@ class ExecutionSafety:
         # CONFIDENCE CHECK
         # ==========================
 
-        if confidence < 50:
+        if confidence < 40:
 
             reasons.append(
                 "Confidence too low"

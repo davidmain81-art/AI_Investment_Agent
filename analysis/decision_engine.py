@@ -60,7 +60,15 @@ def make_decision(
     # Pattern Recognition
     # ==============================
 
-    pattern_score = 0
+    pattern_engine = PatternEngine()
+
+    pattern_result = pattern_engine.analyze()
+
+    pattern_score = pattern_result["pattern_score"]
+
+    pattern_analysis = pattern_result["patterns"]
+
+    pattern_engine.close()
 
 
     optimizer_score = AIOptimizer().optimize(learning)
@@ -86,6 +94,7 @@ def make_decision(
         confidence=confidence,
         risk=risk,
         optimizer_score=optimizer_score,
+        pattern_score=pattern_score,
     )
 
     # ===========================================
@@ -142,7 +151,7 @@ def make_decision(
     position = f'{risk_manager["position_size"]}%'
 
     reasons = ReasoningEngine().build(
-        recommendation,
+        signal,
         risk,
         market_score,
         confidence,
@@ -181,7 +190,7 @@ def make_decision(
 
         "pattern_score": pattern_score,
 
-        "pattern_analysis": {},
+        "pattern_analysis": pattern_analysis,
 
     }
 

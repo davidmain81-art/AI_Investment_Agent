@@ -1,12 +1,12 @@
 """
 Market Service
-Version 1.1
+Version 2.0
 """
-
-import pandas as pd
 
 from logs.data_logger import save_market_data
 from data.crypto import get_crypto_prices
+
+from providers.binance_candle_provider import BinanceCandleProvider
 
 from analysis.market_analysis import analyze_market
 from analysis.market_score import calculate_market_score
@@ -16,33 +16,33 @@ class MarketService:
 
     def load(self):
 
+        # قیمت لحظه‌ای
         prices = get_crypto_prices()
 
         save_market_data(prices)
 
+
         # ---------------------------------
-        # Temporary OHLC dataframe
-        # (در نسخه بعد با Binance Candle Provider جایگزین می‌شود)
+        # Real Binance OHLC Data
         # ---------------------------------
 
-        btc = prices["BTC"]["price"]
+        df = BinanceCandleProvider().load()
 
-        df = pd.DataFrame({
 
-            "open": [btc] * 250,
-            "high": [btc] * 250,
-            "low": [btc] * 250,
-            "close": [btc] * 250,
-            "volume": [1000] * 250,
-
-        })
+        # ---------------------------------
+        # Market Analysis
+        # ---------------------------------
 
         signal, risk, market_score, indicators = analyze_market(
             prices,
             df,
         )
 
-        score = calculate_market_score(prices)
+
+        score = calculate_market_score(
+            prices,
+        )
+
 
         return {
 

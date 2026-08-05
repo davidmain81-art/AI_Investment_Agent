@@ -5,6 +5,7 @@ Version 3.1 Stable
 
 from memory.memory_database import load_memory
 from learning.experience_manager import ExperienceManager
+from typing import Dict
 
 
 class LearningEngine:
@@ -50,8 +51,8 @@ class LearningEngine:
         max_drawdown = 0
 
 
-        asset_score = {}
-        signal_score = {}
+        asset_score: Dict[str, float] = {}
+        signal_score: Dict[str, float] = {}
 
 
         for row in rows:
@@ -218,7 +219,7 @@ class LearningEngine:
 
             if gross_loss
 
-            else 1
+            else 999
 
         )
 

@@ -5,14 +5,19 @@ sys.path.append(
     str(Path(__file__).resolve().parent.parent)
 )
 
-
 from learning.pattern_engine import PatternEngine
 
 
-engine = PatternEngine()
+def test_pattern_engine():
 
+    engine = PatternEngine()
 
-engine.report()
+    result = engine.analyze()
 
+    assert result is not None
 
-engine.close()
+    assert "pattern_score" in result
+
+    assert "patterns" in result
+
+    engine.close()

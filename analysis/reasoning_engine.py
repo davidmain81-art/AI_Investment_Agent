@@ -1,38 +1,40 @@
 """
 AI Reasoning Engine
-Version 2.0
+Version 3.0 Stable
 """
 
 
 class ReasoningEngine:
 
     def build(
-
         self,
-
         signal,
-
         risk,
-
         market_score,
-
         confidence,
-
         ai_stats,
-
     ):
 
         reasons = []
 
-        # ===========================
-        # Signal
-        # ===========================
+        # =====================================
+        # Normalize Signal
+        # =====================================
 
-        if signal == "BUY":
+        signal = str(signal).upper()
+
+        is_buy = "BUY" in signal
+        is_sell = "SELL" in signal
+
+        # =====================================
+        # Trend Analysis
+        # =====================================
+
+        if is_buy:
 
             reasons.append("Trend is bullish.")
 
-        elif signal == "SELL":
+        elif is_sell:
 
             reasons.append("Trend is bearish.")
 
@@ -40,88 +42,74 @@ class ReasoningEngine:
 
             reasons.append("Market is neutral.")
 
-        # ===========================
+        # =====================================
         # Risk
-        # ===========================
-
-        reasons.append(f"Risk level is {risk}.")
-
-        # ===========================
-        # Market
-        # ===========================
-
-        reasons.append(f"Market Score = {market_score}/100")
-
-        # ===========================
-        # Learning
-        # ===========================
+        # =====================================
 
         reasons.append(
+            f"Risk level is {risk}."
+        )
 
+        # =====================================
+        # Market Score
+        # =====================================
+
+        reasons.append(
+            f"Market Score = {market_score}/100"
+        )
+
+        # =====================================
+        # AI Learning
+        # =====================================
+
+        reasons.append(
             f"Historical Win Rate = {ai_stats['win_rate']}%"
-
         )
 
         reasons.append(
-
             f"Experience = {ai_stats['experience']} trades"
-
         )
 
         reasons.append(
-
             f"Profit Factor = {ai_stats['profit_factor']}"
-
         )
 
         reasons.append(
-
             f"Best Asset = {ai_stats['best_asset']}"
-
         )
 
         reasons.append(
-
             f"Best Signal = {ai_stats['best_signal']}"
-
         )
 
-        # ===========================
+        # =====================================
         # Confidence
-        # ===========================
+        # =====================================
 
         reasons.append(
-
             f"Final Confidence = {confidence}%"
-
         )
 
-        # ===========================
-        # Final Conclusion
-        # ===========================
+        # =====================================
+        # Final Recommendation
+        # =====================================
 
-        if signal == "BUY":
+        if is_buy:
 
             reasons.append(
-
                 "AI recommends opening or keeping BUY positions."
-
             )
 
-        elif signal == "SELL":
+        elif is_sell:
 
             reasons.append(
-
                 "AI recommends avoiding long positions."
-
             )
 
         else:
 
             reasons.append(
-
                 "AI recommends waiting for a better opportunity."
-
             )
 
         return reasons
