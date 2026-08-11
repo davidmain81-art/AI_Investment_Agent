@@ -44,7 +44,7 @@ def close_trade(
 
     entry = trade["entry_price"]
 
-    if signal == "BUY":
+    if "BUY" in signal:
 
         pnl = round(
             (exit_price - entry)
