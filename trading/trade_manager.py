@@ -1,28 +1,12 @@
-from engine.trade_pipeline import TradePipeline
 from database.predictions import save_prediction
 from database.prediction_results import save_prediction_result
 
 from database.trades import (
     save_trade,
     get_last_open_trade,
-    close_trade,
 )
 
-
-def calculate_pnl(signal, entry_price, exit_price):
-    """
-    Calculate trade profit percentage.
-    """
-
-    if signal == "BUY":
-
-        pnl = ((exit_price - entry_price) / entry_price) * 100
-
-    else:
-
-        pnl = ((entry_price - exit_price) / entry_price) * 100
-
-    return round(pnl, 2)
+from database.close_trade import close_trade
 
 
 def create_trade(
@@ -31,6 +15,7 @@ def create_trade(
     entry_price,
     stop_loss,
     take_profit,
+    exit_price=None,
 ):
 
     # ==========================================
@@ -41,6 +26,8 @@ def create_trade(
 
         return get_last_open_trade()
 
+    # ==========================================
+    # Position Validation
     # ==========================================
 
     position = decision["position"].replace("%", "").strip()
@@ -57,55 +44,46 @@ def create_trade(
 
         return None
 
-    current_trade = get_last_open_trade()
+    # ==========================================
+    # Existing OPEN Trade
+    # ==========================================
 
-    # ==========================================
-    # Existing OPEN trade
-    # ==========================================
+    current_trade = get_last_open_trade()
 
     if current_trade:
 
+        # Same signal → keep existing trade
         if current_trade["signal"] == decision["recommendation"]:
 
             return current_trade
-        
-        return current_trade
 
-        pnl = calculate_pnl(
+        # ======================================
+        # Reverse Signal
+        # ======================================
 
-            current_trade["signal"],
+        if exit_price is None:
 
-            current_trade["entry_price"],
+            exit_price = entry_price
 
-            exit_price,
-
-        )
-
-        success = pnl > 0
-
-        save_prediction_result(
-
-            current_trade["prediction_id"],
-
-            exit_price,
-
-            pnl,
-
-            success,
-
-        )
-
-        close_trade(
-
+        closed_trade = close_trade(
             trade_id=current_trade["id"],
-
             exit_price=exit_price,
-
-            pnl=pnl,
-
             exit_reason="Reverse Signal",
-
         )
+
+        # ======================================
+        # Save Prediction Result
+        # PnL comes from close_trade()
+        # ======================================
+
+        if closed_trade:
+
+            save_prediction_result(
+                current_trade["prediction_id"],
+                exit_price,
+                closed_trade["pnl"],
+                closed_trade.get("result") == "WIN",
+            )
 
     # ==========================================
     # Prediction
@@ -124,7 +102,7 @@ def create_trade(
     )
 
     # ==========================================
-    # Trade
+    # New Trade
     # ==========================================
 
     trade_id = save_trade(
