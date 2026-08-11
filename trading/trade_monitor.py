@@ -1,6 +1,6 @@
 """
 Trade Monitor
-Version 0.6
+Version 0.7
 """
 
 from trading.trade_manager import (
@@ -47,11 +47,13 @@ class TradeMonitor:
         if trade is None:
             return None
 
+        signal = trade["signal"]
+
         # ==========================
         # BUY Trade
         # ==========================
 
-        if trade["signal"] == "BUY":
+        if "BUY" in signal:
 
             # Take Profit
 
@@ -111,7 +113,7 @@ class TradeMonitor:
         # SELL Trade
         # ==========================
 
-        elif trade["signal"] == "SELL":
+        elif "SELL" in signal:
 
             # Take Profit
 
