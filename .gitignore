@@ -18,6 +18,3 @@ database/*.db
 *.db
 
 logs/
-
-__pycache__/
-*.pyc
