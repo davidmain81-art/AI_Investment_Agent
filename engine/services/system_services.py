@@ -1,9 +1,10 @@
-"""
+﻿"""
 System Services
-Version 1.0
+Version 1.1
 """
 
 from engine.services.market_service import MarketService
+from engine.services.market_router_service import MarketRouterService
 from engine.services.iran_service import IranService
 from engine.services.global_service import GlobalService
 from engine.services.decision_service import DecisionService
@@ -21,6 +22,8 @@ class SystemServices:
     def __init__(self):
 
         self.market = MarketService()
+
+        self.market_router = MarketRouterService()
 
         self.iran = IranService()
 

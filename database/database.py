@@ -169,69 +169,111 @@ def initialize_database():
     )
 
     """)
+# ===================================================
+# Trade Features
+# ===================================================
 
+    cursor.execute("""
+
+    CREATE TABLE IF NOT EXISTS trade_features(
+
+        trade_id INTEGER PRIMARY KEY,
+
+        created_at TEXT,
+
+        asset TEXT,
+
+        signal TEXT,
+
+        entry REAL,
+
+        ai_score REAL,
+
+        confidence REAL,
+
+        risk TEXT,
+
+        market_score REAL,
+
+        learning REAL,
+
+        optimizer REAL,
+
+        pattern_score REAL,
+
+        position_size REAL,
+
+        stop_loss REAL,
+
+        take_profit REAL,
+
+        rsi REAL,
+
+        mfi REAL,
+
+        macd REAL,
+
+        macd_signal REAL,
+
+        ema20 REAL,
+
+        ema50 REAL,
+
+        ema200 REAL,
+
+        atr REAL,
+
+        adx REAL,
+
+        obv REAL
+
+    )
+
+    """)
     # ===================================================
     # Auto Migration
     # ===================================================
 
     add_column_if_not_exists(
-
         cursor,
-
         "trades",
-
         "prediction_id",
-
         "INTEGER",
-
     )
 
     add_column_if_not_exists(
-
         cursor,
-
         "trades",
-
         "exit_price",
-
         "REAL",
-
     )
 
     add_column_if_not_exists(
-
         cursor,
-
         "trades",
-
         "closed_at",
-
         "TEXT",
-
     )
 
     add_column_if_not_exists(
-
         cursor,
-
         "trades",
-
         "pnl",
-
         "REAL",
-
     )
 
     add_column_if_not_exists(
-
         cursor,
-
         "trades",
-
         "exit_reason",
-
         "TEXT",
+    )
 
+    add_column_if_not_exists(
+        cursor,
+        "trades",
+        "quantity",
+        "REAL DEFAULT 1",
     )
 
     connection.commit()

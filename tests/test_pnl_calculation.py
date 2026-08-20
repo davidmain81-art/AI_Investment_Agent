@@ -4,13 +4,15 @@ import database.close_trade as close_trade_module
 
 
 def create_test_database(tmp_path):
+
     db_path = tmp_path / "test_trades.db"
 
     connection = sqlite3.connect(db_path)
 
     cursor = connection.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         CREATE TABLE trades(
 
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,10 +41,13 @@ def create_test_database(tmp_path):
 
             pnl REAL,
 
-            exit_reason TEXT
+            exit_reason TEXT,
+
+            quantity REAL
 
         )
-    """)
+        """
+    )
 
     connection.commit()
     connection.close()
@@ -50,7 +55,12 @@ def create_test_database(tmp_path):
     return db_path
 
 
-def insert_trade(db_path, signal, entry_price=100.0):
+def insert_trade(
+    db_path,
+    signal,
+    entry_price=100.0,
+):
+
     connection = sqlite3.connect(db_path)
 
     cursor = connection.cursor()
@@ -58,6 +68,7 @@ def insert_trade(db_path, signal, entry_price=100.0):
     cursor.execute(
         """
         INSERT INTO trades(
+
             created_at,
             asset,
             signal,
@@ -65,9 +76,12 @@ def insert_trade(db_path, signal, entry_price=100.0):
             stop_loss,
             take_profit,
             confidence,
-            status
+            status,
+            quantity
+
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             "2026-08-11 00:00:00",
@@ -78,6 +92,7 @@ def insert_trade(db_path, signal, entry_price=100.0):
             110.0,
             80.0,
             "OPEN",
+            1.0,
         ),
     )
 
@@ -89,14 +104,17 @@ def insert_trade(db_path, signal, entry_price=100.0):
     return trade_id
 
 
-def test_buy_pnl(tmp_path, monkeypatch):
+def test_buy_pnl(
+    tmp_path,
+    monkeypatch,
+):
 
     db_path = create_test_database(tmp_path)
 
     monkeypatch.setattr(
         close_trade_module,
-        "DB_NAME",
-        str(db_path),
+        "get_connection",
+        lambda: sqlite3.connect(db_path),
     )
 
     trade_id = insert_trade(
@@ -111,17 +129,21 @@ def test_buy_pnl(tmp_path, monkeypatch):
     )
 
     assert result["pnl"] == 10.0
+
     assert result["result"] == "WIN"
 
 
-def test_sell_pnl(tmp_path, monkeypatch):
+def test_sell_pnl(
+    tmp_path,
+    monkeypatch,
+):
 
     db_path = create_test_database(tmp_path)
 
     monkeypatch.setattr(
         close_trade_module,
-        "DB_NAME",
-        str(db_path),
+        "get_connection",
+        lambda: sqlite3.connect(db_path),
     )
 
     trade_id = insert_trade(
@@ -136,17 +158,21 @@ def test_sell_pnl(tmp_path, monkeypatch):
     )
 
     assert result["pnl"] == 10.0
+
     assert result["result"] == "WIN"
 
 
-def test_strong_buy_pnl(tmp_path, monkeypatch):
+def test_strong_buy_pnl(
+    tmp_path,
+    monkeypatch,
+):
 
     db_path = create_test_database(tmp_path)
 
     monkeypatch.setattr(
         close_trade_module,
-        "DB_NAME",
-        str(db_path),
+        "get_connection",
+        lambda: sqlite3.connect(db_path),
     )
 
     trade_id = insert_trade(
@@ -161,4 +187,5 @@ def test_strong_buy_pnl(tmp_path, monkeypatch):
     )
 
     assert result["pnl"] == 10.0
+
     assert result["result"] == "WIN"

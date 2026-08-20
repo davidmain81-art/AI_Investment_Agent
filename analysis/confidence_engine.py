@@ -1,6 +1,6 @@
 """
 AI Confidence Engine
-Version 2.1
+Version 2.2
 """
 
 from learning.learning_engine import LearningEngine
@@ -27,10 +27,29 @@ class ConfidenceEngine:
         confidence = 50
 
         # -------------------------
+        # Sample Size Confidence
+        # -------------------------
+
+        exp = stats["experience"]
+
+        sample_factor = min(
+            exp / 20.0,
+            1.0
+        )
+
+        # -------------------------
+        # Learning Factors
+        # -------------------------
+
+        learning_adjustment = 0
+
+        # -------------------------
         # Win Rate
         # -------------------------
 
-        confidence += (stats["win_rate"] - 50) * 0.10
+        learning_adjustment += (
+            stats["win_rate"] - 50
+        ) * 0.10
 
         # -------------------------
         # Profit Factor
@@ -38,23 +57,26 @@ class ConfidenceEngine:
 
         if stats["profit_factor"] == 0:
 
-            confidence -= 10
+            learning_adjustment -= 10
 
         elif stats["profit_factor"] > 1:
 
-            confidence += min(
-
+            learning_adjustment += min(
                 stats["profit_factor"],
-
                 3,
-
             ) * 2
+
+        # -------------------------
+        # Apply Sample Factor
+        # -------------------------
+
+        learning_adjustment *= sample_factor
+
+        confidence += learning_adjustment
 
         # -------------------------
         # Experience
         # -------------------------
-
-        exp = stats["experience"]
 
         if exp >= 100:
 
@@ -80,7 +102,9 @@ class ConfidenceEngine:
         # Market Score
         # -------------------------
 
-        confidence += (market_score - 50) * 0.50
+        confidence += (
+            market_score - 50
+        ) * 0.50
 
         # -------------------------
         # Risk
@@ -93,6 +117,10 @@ class ConfidenceEngine:
         elif risk == "HIGH":
 
             confidence -= 10
+
+        # -------------------------
+        # Final Clamp
+        # -------------------------
 
         confidence = max(
 

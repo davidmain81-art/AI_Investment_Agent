@@ -1,6 +1,6 @@
 """
 Backtest Engine
-Version 0.9
+Version 1.1
 """
 
 from config.database import get_database
@@ -10,52 +10,47 @@ from database.database import get_connection
 class BacktestEngine:
 
     def __init__(self):
-        pass
-
-    # ----------------------------------------------------
+        self.database = get_database()
 
     def load_results(self):
-        """
-        Load all CLOSED trades.
-        """
 
-        self.connection = get_connection(get_database())
+        connection = get_connection(self.database)
 
-        cursor = self.connection.cursor()
+        try:
 
-        cursor.execute(
-            """
-            SELECT
+            cursor = connection.cursor()
 
-                id,
-                asset,
-                signal,
-                entry_price,
-                exit_price,
-                pnl,
-                confidence,
-                exit_reason,
-                created_at,
-                closed_at
+            cursor.execute(
+                """
+                SELECT
+                    id,
+                    asset,
+                    signal,
+                    entry_price,
+                    exit_price,
+                    pnl,
+                    confidence,
+                    exit_reason,
+                    created_at,
+                    closed_at
 
-            FROM trades
+                FROM trades
 
-            WHERE status='CLOSED'
+                WHERE status='CLOSED'
+                AND exit_price IS NOT NULL
+                AND pnl IS NOT NULL
 
-            ORDER BY id
-            """
-        )
+                ORDER BY id
+                """
+            )
 
-        rows = cursor.fetchall()
+            rows = cursor.fetchall()
 
-        results = []
+            results = []
 
-        for row in rows:
+            for row in rows:
 
-            results.append(
-
-                {
-
+                results.append({
                     "id": row[0],
                     "asset": row[1],
                     "signal": row[2],
@@ -66,11 +61,10 @@ class BacktestEngine:
                     "exit_reason": row[7],
                     "created_at": row[8],
                     "closed_at": row[9],
+                })
 
-                }
+            return results
 
-            )
+        finally:
 
-        self.connection.close()
-
-        return results
+            connection.close()

@@ -1,6 +1,6 @@
-"""
+﻿"""
 Market Service
-Version 2.0
+Version 2.2
 """
 
 from logs.data_logger import save_market_data
@@ -16,33 +16,45 @@ class MarketService:
 
     def load(self):
 
-        # قیمت لحظه‌ای
+        # ==========================================
+        # Crypto Market Prices
+        # ==========================================
+
         prices = get_crypto_prices()
 
         save_market_data(prices)
 
-
-        # ---------------------------------
+        # ==========================================
         # Real Binance OHLC Data
-        # ---------------------------------
+        # ==========================================
 
         df = BinanceCandleProvider().load()
 
+        # ==========================================
+        # Technical Market Analysis
+        # ==========================================
 
-        # ---------------------------------
-        # Market Analysis
-        # ---------------------------------
-
-        signal, risk, market_score, indicators = analyze_market(
+        (
+            signal,
+            risk,
+            technical_score,
+            indicators,
+        ) = analyze_market(
             prices,
             df,
         )
 
+        # ==========================================
+        # Global Market Score
+        # ==========================================
 
-        score = calculate_market_score(
+        market_score = calculate_market_score(
             prices,
         )
 
+        # ==========================================
+        # Result
+        # ==========================================
 
         return {
 
@@ -53,6 +65,8 @@ class MarketService:
             "risk": risk,
 
             "market_score": market_score,
+
+            "technical_score": technical_score,
 
             "indicators": indicators,
 

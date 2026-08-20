@@ -4,7 +4,6 @@ Version 3.1 Stable
 """
 
 from memory.memory_database import load_memory
-from learning.experience_manager import ExperienceManager
 from typing import Dict
 
 
@@ -17,8 +16,6 @@ class LearningEngine:
     def analyze(self):
 
         memory_rows = load_memory()
-
-        paper_stats = ExperienceManager().get_statistics()
 
         rows = memory_rows
 
@@ -150,11 +147,9 @@ class LearningEngine:
 
                 "experience": 0,
 
-                "paper_trades": paper_stats["trades"],
-                "paper_win_rate": paper_stats["win_rate"],
-                "paper_total_profit": paper_stats["total_pnl"],
-
-                "experience": experience_count,
+                "paper_trades": 0,
+                "paper_win_rate": 0,
+                "paper_total_profit": 0,
 
                 "wins": 0,
                 "losses": 0,
@@ -282,26 +277,14 @@ class LearningEngine:
 
 
 
-        experience_stats = {
-
-            "trades": paper_stats["trades"],
-
-            "win_rate": paper_stats["win_rate"],
-
-            "total_pnl": paper_stats["total_pnl"],
-
-        }
-
-
-
         return {
 
 
-            "paper_trades": experience_stats["trades"],
+            "paper_trades": experience_count,
 
-            "paper_win_rate": experience_stats["win_rate"],
+            "paper_win_rate": win_rate,
 
-            "paper_total_profit": experience_stats["total_pnl"],
+            "paper_total_profit": net_profit,
 
             "experience": experience_count,
 

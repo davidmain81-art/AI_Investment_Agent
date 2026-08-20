@@ -8,6 +8,12 @@ def test_reverse_signal_closes_existing_trade(monkeypatch):
         "position": "10%",
         "confidence": 80,
         "holding": "SWING",
+
+        "safety": {
+            "allowed": True,
+            "status": "TRADE ALLOWED",
+            "reasons": []
+        },
     }
 
     existing_trade = {
@@ -26,6 +32,12 @@ def test_reverse_signal_closes_existing_trade(monkeypatch):
         trade_manager,
         "get_last_open_trade",
         lambda: existing_trade,
+    )
+    
+    monkeypatch.setattr(
+        trade_manager,
+        "save_trade_features",
+        lambda **kwargs: None,
     )
 
     close_calls = []

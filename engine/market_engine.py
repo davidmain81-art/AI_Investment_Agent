@@ -1,6 +1,6 @@
 """
 Market Service
-Version 2.0
+Version 2.1
 """
 
 from data.crypto import get_crypto_prices
@@ -16,24 +16,40 @@ class MarketService:
 
     def load(self):
 
-        # قیمت لحظه‌ای
+        # ==========================================
+        # Crypto Prices
+        # ==========================================
+
         prices = get_crypto_prices()
 
         save_market_data(prices)
 
-        # کندل‌های واقعی
+        # ==========================================
+        # Binance Candles
+        # ==========================================
+
         df = BinanceCandleProvider().load()
 
-        # تحلیل بازار
-        signal, risk = analyze_market(
+        # ==========================================
+        # Market Analysis
+        # ==========================================
+
+        signal, risk, analysis_score, indicators = analyze_market(
             prices,
             df,
         )
+
+        # ==========================================
+        # Market Score
+        # ==========================================
 
         market_score = calculate_market_score(
             prices,
-            df,
         )
+
+        # ==========================================
+        # Result
+        # ==========================================
 
         return {
 
@@ -46,6 +62,10 @@ class MarketService:
             "risk": risk,
 
             "market_score": market_score,
+
+            "analysis_score": analysis_score,
+
+            "indicators": indicators,
 
             "df": df,
 

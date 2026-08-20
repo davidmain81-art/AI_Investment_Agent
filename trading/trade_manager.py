@@ -4,6 +4,7 @@ from database.prediction_results import save_prediction_result
 from database.trades import (
     save_trade,
     get_last_open_trade,
+    save_trade_features,
 )
 
 from database.close_trade import close_trade
@@ -19,6 +20,38 @@ def create_trade(
 ):
 
     # ==========================================
+    # SAFETY GATE
+    # ==========================================
+    #
+    # A trade must NEVER be created when
+    # ExecutionSafety says it is not allowed.
+    #
+    # We check this here because create_trade()
+    # can be called from multiple places.
+    #
+
+    safety = decision.get("safety", {})
+
+    if not safety.get("allowed", False):
+
+        print("=" * 60)
+        print("TRADE CREATION BLOCKED")
+        print("Execution Safety : NOT ALLOWED")
+
+        reasons = safety.get(
+            "reasons",
+            ["Execution Safety blocked the trade."]
+        )
+
+        print("Reasons:")
+        for reason in reasons:
+            print(f" - {reason}")
+
+        print("=" * 60)
+
+        return None
+
+    # ==========================================
     # HOLD = DO NOTHING
     # ==========================================
 
@@ -30,17 +63,29 @@ def create_trade(
     # Position Validation
     # ==========================================
 
-    position = decision["position"].replace("%", "").strip()
+    position = decision.get(
+        "position",
+        "0"
+    )
+
+    position = str(position).replace(
+        "%",
+        ""
+    ).strip()
 
     try:
 
         position = float(position)
 
-    except ValueError:
+    except (ValueError, TypeError):
 
         position = 0
 
     if position <= 0:
+
+        print(
+            "TRADE BLOCKED: Invalid position size"
+        )
 
         return None
 
@@ -52,7 +97,10 @@ def create_trade(
 
     if current_trade:
 
+        # ======================================
         # Same signal → keep existing trade
+        # ======================================
+
         if current_trade["signal"] == decision["recommendation"]:
 
             return current_trade
@@ -73,7 +121,6 @@ def create_trade(
 
         # ======================================
         # Save Prediction Result
-        # PnL comes from close_trade()
         # ======================================
 
         if closed_trade:
@@ -124,6 +171,32 @@ def create_trade(
         status="OPEN",
 
     )
+
+    # ==========================================
+    # Save Entry Features
+    # ==========================================
+
+    save_trade_features(
+
+        trade_id=trade_id,
+
+        asset=asset,
+
+        signal=decision["recommendation"],
+
+        entry_price=entry_price,
+
+        stop_loss=stop_loss,
+
+        take_profit=take_profit,
+
+        decision=decision,
+
+    )
+
+    # ==========================================
+    # Return Trade
+    # ==========================================
 
     return {
 

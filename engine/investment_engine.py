@@ -1,4 +1,4 @@
-"""
+﻿"""
 Investment Engine
 Version 1.0 Stable
 """
@@ -79,7 +79,11 @@ class InvestmentEngine:
 
             decision,
 
+            market_score,
+
             iran_decision,
+
+            iran_score,
 
         )
 

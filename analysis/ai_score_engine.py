@@ -1,73 +1,104 @@
 """
 AI Score Engine
-Version 3.0 Pattern Learning Integrated
+Version 4.0
+Sample-Adjusted Pattern Learning
 """
 
 
 class AIScoreEngine:
 
     def calculate(
-
         self,
-
         market_score,
-
         learning,
-
         confidence,
-
         risk,
-
         optimizer_score=0,
-
         pattern_score=0,
-
     ):
 
         # ==========================================
-        # Base Score
+        # Experience / Sample Size
         # ==========================================
 
-        score = market_score
-
-
-        # ==========================================
-        # Confidence Weight
-        # ==========================================
-
-        score += confidence * 0.30
-
-
-
-        # ==========================================
-        # Learning Weight
-        # ==========================================
-
-        score += learning["win_rate"] * 0.15
-
-
-
-        # ==========================================
-        # Profit Factor
-        # ==========================================
-
-        score += min(
-
-            learning["profit_factor"] * 10,
-
-            5
-
+        experience = learning.get(
+            "experience",
+            0,
         )
 
-
+        sample_factor = min(
+            experience / 50.0,
+            1.0,
+        )
 
         # ==========================================
-        # Pattern Recognition Weight
+        # Base Market Score
         # ==========================================
 
-        score += pattern_score * 0.10
+        score = float(market_score)
 
+        # ==========================================
+        # Confidence
+        # ==========================================
 
+        confidence_effect = (
+            confidence - 50
+        ) * 0.20
+
+        score += confidence_effect
+
+        # ==========================================
+        # Learning - Sample Adjusted
+        # ==========================================
+
+        win_rate = learning.get(
+            "win_rate",
+            50,
+        )
+
+        learning_effect = (
+            (win_rate - 50)
+            * 0.10
+            * sample_factor
+        )
+
+        score += learning_effect
+
+        # ==========================================
+        # Profit Factor - Sample Adjusted
+        # ==========================================
+
+        profit_factor = learning.get(
+            "profit_factor",
+            1,
+        )
+
+        if profit_factor > 1:
+
+            profit_factor_effect = min(
+                (profit_factor - 1) * 2,
+                5,
+            )
+
+        else:
+
+            profit_factor_effect = 0
+
+        profit_factor_effect *= sample_factor
+
+        score += profit_factor_effect
+
+        # ==========================================
+        # Pattern Recognition - Sample Adjusted
+        # ==========================================
+
+        pattern_effect = (
+            pattern_score
+            * 0.10
+            * sample_factor
+        )
+
+        score += pattern_effect
 
         # ==========================================
         # Risk Adjustment
@@ -77,69 +108,46 @@ class AIScoreEngine:
 
             score += 5
 
-
         elif risk == "MEDIUM":
 
-            score += 2
+            score += 0
 
+        elif risk == "HIGH":
 
-        else:
-
-            score -= 5
-
-
+            score -= 10
 
         # ==========================================
-        # Optimizer Impact
+        # Optimizer - Sample Adjusted
         # ==========================================
 
         raw_optimizer_score = optimizer_score
 
-
         optimizer_score = max(
-
             -20,
-
             min(
-
                 20,
-
-                optimizer_score
-
-            )
-
+                optimizer_score,
+            ),
         )
 
+        optimizer_effect = (
+            optimizer_score
+            * sample_factor
+        )
 
-        print("Raw Optimizer :", raw_optimizer_score)
-
-        print("Used Optimizer:", optimizer_score)
-
-
-
-        score += optimizer_score
-
-
+        score += optimizer_effect
 
         # ==========================================
         # Final Clamp
         # ==========================================
 
         score = max(
-
             0,
-
             min(
-
                 100,
-
-                round(score, 2)
-
-            )
-
+                round(score, 2),
+            ),
         )
-
-
 
         # ==========================================
         # Debug
@@ -149,22 +157,94 @@ class AIScoreEngine:
 
         print("AI SCORE DEBUG")
 
-        print("Market Score     :", market_score)
+        print(
+            "Market Score       :",
+            market_score,
+        )
 
-        print("Confidence       :", confidence)
+        print(
+            "Confidence         :",
+            confidence,
+        )
 
-        print("Learning WinRate :", learning["win_rate"])
+        print(
+            "Confidence Effect  :",
+            round(
+                confidence_effect,
+                2,
+            ),
+        )
 
-        print("Profit Factor    :", learning["profit_factor"])
+        print(
+            "Experience         :",
+            experience,
+        )
 
-        print("Pattern Score    :", pattern_score)
+        print(
+            "Sample Factor      :",
+            round(
+                sample_factor,
+                2,
+            ),
+        )
 
-        print("Optimizer Score  :", optimizer_score)
+        print(
+            "Learning Effect    :",
+            round(
+                learning_effect,
+                2,
+            ),
+        )
 
-        print("FINAL AI SCORE   :", score)
+        print(
+            "Profit Factor      :",
+            profit_factor,
+        )
+
+        print(
+            "PF Effect          :",
+            round(
+                profit_factor_effect,
+                2,
+            ),
+        )
+
+        print(
+            "Pattern Score      :",
+            pattern_score,
+        )
+
+        print(
+            "Pattern Effect     :",
+            round(
+                pattern_effect,
+                2,
+            ),
+        )
+
+        print(
+            "Optimizer Raw      :",
+            raw_optimizer_score,
+        )
+
+        print(
+            "Optimizer Effect   :",
+            round(
+                optimizer_effect,
+                2,
+            ),
+        )
+
+        print(
+            "Risk                :",
+            risk,
+        )
+
+        print(
+            "FINAL AI SCORE     :",
+            score,
+        )
 
         print("=" * 60)
-
-
 
         return score

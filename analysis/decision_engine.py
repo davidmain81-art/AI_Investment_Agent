@@ -62,7 +62,11 @@ def make_decision(
 
     pattern_engine = PatternEngine()
 
-    pattern_result = pattern_engine.analyze()
+    pattern_result = pattern_engine.analyze(
+        current_rsi=indicators["RSI"],
+        current_ema20=indicators["EMA20"],
+        current_ema50=indicators["EMA50"],
+    )
 
     pattern_score = pattern_result["pattern_score"]
 

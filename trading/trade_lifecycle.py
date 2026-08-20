@@ -88,7 +88,7 @@ class TradeLifecycle:
         # SELL
         # ==========================================
 
-        elif signal == "SELL":
+        elif "SELL" in signal:
 
             print("Checking SELL trade...")
 
